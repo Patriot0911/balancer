@@ -1,17 +1,5 @@
+import { IAllPlayersProps } from '@/types';
 import './AllPlayers.css';
-
-export interface IPlayer {
-    name: string;
-    roles: {
-        tank: number;
-        damage: number;
-        support: number;
-    };
-};
-
-interface IAllPlayersProps {
-    playersList: IPlayer[];
-};
 
 const AllPlayers = ({ playersList }: IAllPlayersProps) => {
     return (

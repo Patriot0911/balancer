@@ -1,76 +1,84 @@
 'use client';
-import { Ref } from 'react';
 import './InputPlayer.css';
+import { FormEvent, useRef, useState } from 'react';
+import InputField from '../InputField/InputField';
+import { getRank } from '@/scripts/ranks';
+import { useDispatch } from 'react-redux';
+
+const InputPlayerForm = () => {
+    const [error, setError] = useState<string | null>();
+    const dispatch = useDispatch();
+
+    const nickRef   = useRef<HTMLInputElement>(null);
+    const tankRef   = useRef<HTMLInputElement>(null);
+    const damageRef = useRef<HTMLInputElement>(null);
+    const supportRef = useRef<HTMLInputElement>(null);
+
+    const submitHandle = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const tankRank = getRank(tankRef.current?.value);
+        const damageRef = getRank(tankRef.current?.value);
+        const supportRef = getRank(tankRef.current?.value);
+        if(!tankRank && !damageRef && !supportRef)
+            return setError('At least one role must be provided');
+        if(error)
+            setError(null);
+        // dispatch
+    };
+
+    return (
+        <form
+            onSubmit={submitHandle}
+        >
+            <InputField
+                inputSettings={{
+                        required: true
+                    }
+                }
+                label={'Nick Name'}
+                name={'nickName'}
+                ref={nickRef}
+            />
+            {
+                error && <>{error}</>
+            }
+            <section
+                className={'roles-input-container'}
+            >
+                <InputField
+                    label={'Tank'}
+                    name={'tankRank'}
+                    ref={tankRef}
+                />
+                <InputField
+                    label={'Damage'}
+                    name={'damageRank'}
+                    ref={damageRef}
+                />
+                <InputField
+                    label={'Support'}
+                    name={'supportRank'}
+                    ref={supportRef}
+                />
+            </section>
+
+            <button
+                type={'submit'}
+            > Add </button>
+            <button
+                type={'reset'}
+            > Clear</button>
+        </form>
+    );
+};
 
 const InputPlayer = () => {
     return (
         <section
             className={'input-player'}
         >
-            <form
-                onSubmit={
-                    (e) => e.preventDefault()
-                }
-            >
-                <label>NickName</label>
-                <input
-                    name={'nickname'}
-                    alt={'nickname'}
-                />
-                <InputField
-                    label={'Nick Name'}
-                    name={'nickName'}
-                    ref={null}
-                />
-                <section
-                    className={'roles-input-container'}
-                >
-                    <label>Tank</label>
-                    <input
-                        name={'tankRank'}
-                        alt={'Tank'}
-                    />
-
-                    <label>Damage</label>
-                    <input
-                        name={'damageRank'}
-                        alt={'damage'}
-                    />
-
-                    <label>Tank</label>
-                    <input
-                        name={'supportRank'}
-                        alt={'support'}
-                    />
-                </section>
-
-                <button
-                    type={'submit'}
-                > Add </button>
-                <button
-                    type={'reset'}
-                > Clear</button>
-            </form>
+            <InputPlayerForm />
         </section>
-    );
-};
-
-interface IInputFieldProps {
-    label: string;
-    name: string;
-    ref?: Ref<HTMLInputElement>;
-};
-
-const InputField = ({ label, name, ref }: IInputFieldProps) => {
-    return (
-        <>
-            <label>{label}</label>
-            <input
-                ref={ref}
-                name={name}
-                alt={name}
-            />
-        </>
     );
 };
 

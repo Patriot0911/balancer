@@ -8,15 +8,6 @@
     border-radius: 10px;
     color: rgb(240, 250, 232);
 }
-.input-player form input {
-    background-color: rgba(62, 48, 48, 0.29);
-    stroke: none;
-    border: 1px solid rgba(245, 245, 245, 0.385);
-    color: aliceblue;
-    padding: 4px;
-    margin-bottom: 5px;
-    border-radius: 2px;
-}
 .input-player form button {
     margin: auto;
     margin-top: 5px;

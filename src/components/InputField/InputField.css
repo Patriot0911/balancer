@@ -1,0 +1,20 @@
+.custom-input-label {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-top: 5px;
+}
+.custom-input-input {
+    background-color: rgba(62, 48, 48, 0.29);
+    stroke: none;
+    border: 1px solid rgba(245, 245, 245, 0.385);
+    color: aliceblue;
+    padding: 4px;
+    margin-bottom: 5px;
+    border-radius: 2px;
+    transition: all 0.2s;
+}
+.custom-input-input:focus {
+    background-color: rgb(59, 58, 58)
+}
