@@ -1,0 +1,15 @@
+.my-classic-button {
+    width: 100px;
+    background-color: rgb(36, 33, 33);
+    color: rgb(214, 218, 221);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    transition: all 0.3s;
+}
+.my-classic-button:hover {
+    background-color: rgb(61, 59, 59);
+}

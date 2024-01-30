@@ -1,7 +1,10 @@
-import { IAllPlayersProps } from '@/types';
+"use client";
+import { useAppSelector } from '@/redux/store';
 import './AllPlayers.css';
 
-const AllPlayers = ({ playersList }: IAllPlayersProps) => {
+const AllPlayers = () => {
+    const players = useAppSelector(state => state.allPlayersReducer.value);
+    console.log(players);
     return (
         <section
             className={'all-pls'}
@@ -11,9 +14,14 @@ const AllPlayers = ({ playersList }: IAllPlayersProps) => {
                 className={'players-list'}
             >
                 {
-                    playersList.length < 1 ?
-                    <h3> No Players Found </h3> :
-                    <>bobobob</>
+                    players.map(
+                        (player, index) =>
+                            <div
+                                key={index}
+                            >
+                                {player.name}
+                            </div>
+                    )
                 }
             </div>
             <button>Balance</button>

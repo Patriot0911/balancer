@@ -1,30 +1,27 @@
-import { InputHTMLAttributes, Ref } from "react";
+import { ButtonHTMLAttributes, InputHTMLAttributes, Ref } from "react";
 
 export interface IPlayer {
     name: string;
     roles: {
-        tank: number;
-        damage: number;
-        support: number;
+        tank?: IProdRankData;
+        damage?: IProdRankData;
+        support?: IProdRankData;
     };
 };
 
-export interface IAllPlayersProps {
-    playersList: IPlayer[];
-};
+export interface IErrorInfoProps {
+    text: string;
+}
 
-export interface IInputFieldProps {
-    inputSettings?: IInputSettings;
+export type TClassicButton = {
+    text: string;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
+export type TInputFieldProps = {
     label: string;
     name: string;
     ref?: Ref<HTMLInputElement>;
-};
-
-interface IInputSettings {
-    min?: number;
-    max?: number;
-    required?: boolean;
-};
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export interface IInitialState {
     value: IPlayer[];

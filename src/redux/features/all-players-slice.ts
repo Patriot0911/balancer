@@ -11,13 +11,12 @@ export const allPlayers = createSlice({
     reducers: {
         clearAllPlayers: () => initialState,
         addPlayer: (state, action: PayloadAction<IPlayer>) => {
-            console.log(state);
             return {
                 value: [
                     ...state.value,
                     action.payload
                 ]
-            }
+            };
         }
     }
 });

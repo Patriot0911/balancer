@@ -1,17 +1,5 @@
 import { IProdRankData, IRank, ISimpleRankData } from "@/types";
-
-const ranks: IRank[] = [
-    {
-        name: 'Bronze',
-        begin: 300,
-        step: 300,
-        replaces: [
-            'br', 'bronze',
-            'бронза', 'бр',
-            'b'
-        ]
-    }
-];
+import ranks from "./ranksList";
 
 const isNum = (str: string) => !isNaN(new Number(str).valueOf());
 

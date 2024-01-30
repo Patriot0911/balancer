@@ -8,9 +8,7 @@ const InputBlock = () => {
             className={'input-block'}
         >
             <InputPlayer />
-            <AllPlayers
-                playersList={[]}
-            />
+            <AllPlayers />
         </div>
     );
 };

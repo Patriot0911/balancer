@@ -1,8 +1,8 @@
 import './InputField.css';
 import { Ref, forwardRef } from 'react';
-import { IInputFieldProps } from "@/types";
+import { TInputFieldProps } from "@/types";
 
-const InputField = ({ label, name, inputSettings }: IInputFieldProps, ref: Ref<HTMLInputElement>) => {
+const InputField = ({ label, name, ...props }: TInputFieldProps, ref: Ref<HTMLInputElement>) => {
     return (
         <>
             <label
@@ -11,9 +11,7 @@ const InputField = ({ label, name, inputSettings }: IInputFieldProps, ref: Ref<H
                 {label}
             </label>
             <input
-                min={inputSettings?.min}
-                max={inputSettings?.max}
-                required={inputSettings?.required}
+                {...props}
                 className={'custom-input-input'}
                 ref={ref}
                 name={name}
