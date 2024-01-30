@@ -1,0 +1,32 @@
+.input-player form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(46, 43, 43, 0.554);
+    padding: 15px;
+    border: 2px solid rgba(0, 0, 0, 0.774);
+    border-radius: 10px;
+    color: rgb(240, 250, 232);
+}
+.input-player form input {
+    background-color: rgba(62, 48, 48, 0.29);
+    stroke: none;
+    border: 1px solid rgba(245, 245, 245, 0.385);
+    color: aliceblue;
+    padding: 4px;
+    margin-bottom: 5px;
+    border-radius: 2px;
+}
+.input-player form button {
+    margin: auto;
+    margin-top: 5px;
+    width: 100px;
+}
+.roles-input-container {
+    display: flex;
+    flex-direction: column;
+    border: 4px solid rgba(0, 0, 0, 0.388);
+    border-radius: 3px;
+    padding: 4px 7px 10px 7px;
+    margin-bottom: 10px;
+}
