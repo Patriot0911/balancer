@@ -13,8 +13,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Silver',
-        begin: 300,
-        step: 300,
+        begin: 1500,
+        step: 100,
         replaces: [
             's', 'silver',
             'срібло', 'с'
@@ -22,8 +22,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Gold',
-        begin: 300,
-        step: 300,
+        begin: 2000,
+        step: 100,
         replaces: [
             'g', 'gold',
             'золото', 'з'
@@ -31,8 +31,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Platinum',
-        begin: 300,
-        step: 300,
+        begin: 2500,
+        step: 100,
         replaces: [
             'pt', 'p', 'platinum',
             'платина', 'п'
@@ -40,8 +40,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Diamond',
-        begin: 300,
-        step: 300,
+        begin: 3000,
+        step: 100,
         replaces: [
             'd', 'diamond',
             'даймонд', 'д'
@@ -49,8 +49,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Master',
-        begin: 300,
-        step: 300,
+        begin: 3500,
+        step: 100,
         replaces: [
             'm', 'master',
             'майстр', 'м'
@@ -58,8 +58,8 @@ const ranks: IRank[] = [
     },
     {
         name: 'Grand Master',
-        begin: 300,
-        step: 300,
+        begin: 4000,
+        step: 100,
         replaces: [
             'gm', 'grand master',
             'ґранд майстр', 'ґм'

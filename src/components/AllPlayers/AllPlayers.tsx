@@ -1,10 +1,11 @@
 "use client";
-import { useAppSelector } from '@/redux/store';
 import './AllPlayers.css';
+import { useAppSelector } from '@/redux/store';
+import Player from '../Player/Player';
+import ClassicButton from '../ui/ClassicButton/ClassicButton';
 
 const AllPlayers = () => {
     const players = useAppSelector(state => state.allPlayersReducer.value);
-    console.log(players);
     return (
         <section
             className={'all-pls'}
@@ -16,16 +17,19 @@ const AllPlayers = () => {
                 {
                     players.map(
                         (player, index) =>
-                            <div
-                                key={index}
-                            >
-                                {player.name}
-                            </div>
+                        <Player
+                            key={index}
+                            {...player}
+                        />
                     )
                 }
             </div>
-            <button>Balance</button>
-            <button>Save to cookie</button>
+            <ClassicButton
+                text={'Balance'}
+            />
+            <ClassicButton
+                text={'Save'}
+            />
         </section>
     );
 };

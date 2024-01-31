@@ -1,0 +1,7 @@
+.teams-block {
+    grid-column: 2 / 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}

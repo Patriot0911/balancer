@@ -1,11 +1,3 @@
-.teams-block {
-    /* background-color: #fff; */
-    grid-column: 2 / 4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-}
 main {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

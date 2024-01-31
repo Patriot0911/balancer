@@ -42,3 +42,12 @@ export interface IProdRankData {
     rankName: string;
     rankValue: number;
 };
+
+export interface IPlayerRoleProps extends IProdRankData {
+    index: number;
+};
+
+export interface ITeamProps {
+    players: IPlayer[];
+    name: string;
+};

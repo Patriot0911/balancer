@@ -56,7 +56,7 @@ const InputPlayerForm = () => {
                 <ErrorAlert
                     text={error}
                 /> :
-                <br></br>
+                <br />
             }
             <section
                 className={'roles-input-container'}
