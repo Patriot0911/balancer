@@ -30,6 +30,7 @@ const RoleContainer = ({ roleId }: IRoleContainerProps) => {
         >
             <RoleImage
                 rolename={roleId}
+                className={'team-player-role-img'}
             />
         </div>
     );

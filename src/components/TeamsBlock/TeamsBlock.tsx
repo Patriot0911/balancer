@@ -1,21 +1,23 @@
+"use client";
 import './TeamsBlock.css';
 import Team from '../Team/Team';
+import { useAppSelector } from '@/redux/store';
 
 const TeamsBlock = () => {
-    // const teams = useAppSelector(item => item. smthng like 'teams');
+    const teamPlayers = useAppSelector(item => item.teamsReducer.value);
     return (
         <div
             className={'teams-block'}
         >
             <Team
                 name={'Team A'}
-                players={[]}
+                players={teamPlayers[0]}
                 key={'Team A'}
             />
-            <h2>VS</h2>
+            <h3>VS</h3>
             <Team
                 name={'Team B'}
-                players={[]}
+                players={teamPlayers[1]}
                 key={'Team B'}
             />
         </div>

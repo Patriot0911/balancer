@@ -13,12 +13,19 @@ const Team = ({ players, name }: ITeamProps) => {
                 className={'team-players'}
             >
                 {
-                    players.length > 0 ?
-                    players.map(
-                        (item, index) =>
+                    players ?
+                    Object.values(players).map(
+                    (item, index) =>
+                        Array.isArray(item) ? item.map(
+                            player =>
+                            <TeamPlayer
+                                player={player}
+                                roleId={index}
+                            />
+                        ) :
                         <TeamPlayer
                             player={item}
-                            roleId={getRoleId(index)}
+                            roleId={index}
                         />
                     ) :
                     [...new Array(5)].map(

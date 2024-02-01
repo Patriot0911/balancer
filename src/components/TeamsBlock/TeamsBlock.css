@@ -5,8 +5,8 @@
     align-items: center;
     gap: 15px;
 }
-.teams-block h2 {
+.teams-block h3 {
     color: antiquewhite;
-    font-size: 50px;
+    font-size: 27px;
     user-select: none;
 }

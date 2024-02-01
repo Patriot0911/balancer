@@ -54,7 +54,7 @@ export interface IPlayerRoleProps extends IProdRankData {
 };
 
 export interface ITeamProps {
-    players: IPlayer[];
+    players: ITeam;
     name: string;
 };
 
@@ -67,4 +67,20 @@ export interface ITeamPlayerProps {
 };
 export interface IRoleContainerProps {
     roleId: OverwatchRoles;
+};
+
+export interface ITeamInitialState {
+    value: ITeam[];
+}
+
+export interface ITeam {
+    tank: IPlayer;
+    damage: [
+        IPlayer,
+        IPlayer
+    ];
+    supports: [
+        IPlayer,
+        IPlayer
+    ];
 };

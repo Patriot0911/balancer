@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: row;
 }
-.team-player-container img {
+.team-player-container .team-player-role-img {
     height: 55px;
     width: 55px;
 }
