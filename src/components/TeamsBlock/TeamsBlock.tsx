@@ -1,5 +1,5 @@
-import { useAppSelector } from '@/redux/store';
 import './TeamsBlock.css';
+import Team from '../Team/Team';
 
 const TeamsBlock = () => {
     // const teams = useAppSelector(item => item. smthng like 'teams');
@@ -7,13 +7,17 @@ const TeamsBlock = () => {
         <div
             className={'teams-block'}
         >
-            <section>
-                Team A
-            </section>
+            <Team
+                name={'Team A'}
+                players={[]}
+                key={'Team A'}
+            />
             <h2>VS</h2>
-            <section>
-                Team B
-            </section>
+            <Team
+                name={'Team B'}
+                players={[]}
+                key={'Team B'}
+            />
         </div>
     );
 };

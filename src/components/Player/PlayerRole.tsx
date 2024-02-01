@@ -1,18 +1,13 @@
 import { IPlayerRoleProps } from "@/types";
-
-const roleImages = [
-    'https://i.postimg.cc/nXkD3QtY/tank.png',
-    'https://i.postimg.cc/qtDCTVqN/damage.png',
-    'https://i.postimg.cc/PL589rXG/support.png'
-];
+import RoleImage from "../ui/RoleImage/RoleImage";
 
 const PlayerRole = (props: IPlayerRoleProps) => {
     return (
         <span
             className={'rank-box'}
         >
-            <img
-                src={roleImages[props.index]}
+            <RoleImage
+                rolename={props.index}
             />
             {
                 (props?.rankName || props?.rankValue) ?

@@ -1,4 +1,10 @@
-import { ButtonHTMLAttributes, InputHTMLAttributes, Ref } from "react";
+import { ButtonHTMLAttributes, ImgHTMLAttributes, InputHTMLAttributes, Ref } from "react";
+
+export enum OverwatchRoles {
+    TANK = 0,
+    DAMAGE = 1,
+    SUPPORT = 2
+};
 
 export interface IPlayer {
     name: string;
@@ -50,4 +56,15 @@ export interface IPlayerRoleProps extends IProdRankData {
 export interface ITeamProps {
     players: IPlayer[];
     name: string;
+};
+
+export interface IRoleImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+    rolename: OverwatchRoles;
+};
+export interface ITeamPlayerProps {
+    player?: IPlayer;
+    roleId: OverwatchRoles;
+};
+export interface IRoleContainerProps {
+    roleId: OverwatchRoles;
 };
