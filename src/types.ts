@@ -8,11 +8,13 @@ export enum OverwatchRoles {
 
 export interface IPlayer {
     name: string;
-    roles: {
-        tank?: IProdRankData;
-        damage?: IProdRankData;
-        support?: IProdRankData;
-    };
+    roles: IPlayerRoles;
+};
+
+export interface IPlayerRoles {
+    tank?: IProdRankData;
+    damage?: IProdRankData;
+    support?: IProdRankData;
 };
 
 export interface IErrorInfoProps {

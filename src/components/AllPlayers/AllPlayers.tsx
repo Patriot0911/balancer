@@ -5,6 +5,7 @@ import Player from '../Player/Player';
 import ClassicButton from '../ui/ClassicButton/ClassicButton';
 import { useDispatch } from 'react-redux';
 import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
+import balanceByPair from '@/scripts/balanceByPair';
 import { ITeam } from '@/types';
 
 const AllPlayers = () => {
@@ -12,10 +13,11 @@ const AllPlayers = () => {
     const dispatch = useDispatch();
 
     const balanceHandle = () => {
-        if(players.length < 10)
-            return;
+        // if(players.length < 10)
+        //     return;
         dispatch(clearAllTeams());
         const teams: ITeam[] = [];
+        balanceByPair(players);
         // dispatch(addTeam(teamA));
     };
 
