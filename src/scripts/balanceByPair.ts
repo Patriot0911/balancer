@@ -1,23 +1,15 @@
-import { IPlayer, IPlayerRoles } from "@/types";
-
-const TEAM_PLAYER_REQ = 5;
+import {
+    IPairInfo,
+    IPlayer,
+    IPlayerRoles,
+    ITeamCounts,
+    ITeamInfo
+} from "@/types";
 
 const GLOBAL_COUNTS = {
     tank: 1,
     damage: 2,
     support: 2
-};
-
-interface IPairInfo {
-    gap: number;
-    player1Index: number;
-    player2Index: number | null;
-};
-
-interface ITeamCounts {
-    damage: number;
-    tank: number;
-    support: number;
 };
 
 const getCounts = (players: IPlayer[]): ITeamCounts => ({
@@ -27,6 +19,8 @@ const getCounts = (players: IPlayer[]): ITeamCounts => ({
 });
 
 const sortCond = (pairA: IPairInfo, pairB: IPairInfo) => pairA.gap-pairB.gap;
+
+const getTeamReqCount = () => Object.values(GLOBAL_COUNTS).reduce((lastItem, curItem) => lastItem + curItem, 0);
 
 const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: ITeamCounts, ignoreRoles: (keyof IPlayerRoles)[]) => {
     const pairs: IPairInfo[] = [];
@@ -41,6 +35,7 @@ const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: I
             const roleQuota = (topRoles && topRoles[roleKey] ? 2 : 1)*GLOBAL_COUNTS[roleKey];
             if(counts[roleKey]-roleQuota < GLOBAL_COUNTS[roleKey]*2)
                 return false;
+            // console.log(counts[roleKey]);
         };
         return true;
     };
@@ -90,8 +85,9 @@ const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: I
     return resPairs;
 };
 
-const balanceByPair = (players: IPlayer[], teamCount = 2) => {
-    if(players.length < TEAM_PLAYER_REQ*teamCount || teamCount % 2 !== 0)
+const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefined => {
+    const teamReqCOunt = getTeamReqCount();
+    if(players.length < teamReqCOunt*teamCount || teamCount % 2 !== 0)
         return;
     const initCounts: ITeamCounts = getCounts(players);
     if(
@@ -117,9 +113,9 @@ const balanceByPair = (players: IPlayer[], teamCount = 2) => {
             const { player1Index, player2Index } = pairs[i];
             const firstPlayer = curPlayers[player1Index];
             const secondPlayer = curPlayers[player2Index!];
-            teams[k][role] = firstPlayer;
+            teams[k][role].push(firstPlayer);
             teams[k].score += firstPlayer.roles[role]!.rankValue;
-            teams[k+1][role] = secondPlayer;
+            teams[k+1][role].push(secondPlayer);
             teams[k+1].score += secondPlayer.roles[role]!.rankValue;
             usedIndeces.push(player1Index, player2Index!);
         };
@@ -130,19 +126,17 @@ const balanceByPair = (players: IPlayer[], teamCount = 2) => {
         const roleKey = role as keyof IPlayerRoles;
         ignoreRoles.push(roleKey);
         for(let i = 0; i < GLOBAL_COUNTS[roleKey]; i++) {
-            console.log(role + ' ' + i);
             const counts = getCounts(curPlayers);
             const pairs = getClosestPairs(curPlayers, roleKey, counts, ignoreRoles);
-            console.log(pairs);
             if(!pairs || pairs.length < teamCount/2)
                 return;
-            const sourtedPairs = pairs.sort(sortCond);
-            const usedIndeces = pushRolesToTeams(roleKey, sourtedPairs);
+            const sortedPairs = pairs.sort(sortCond);
+            const usedIndeces = pushRolesToTeams(roleKey, sortedPairs);
+            console.log(sortedPairs);
             curPlayers = curPlayers.filter((item, index) => !usedIndeces.includes(index));
-            console.log(curPlayers);
         };
     };
-    console.log(teams);
+    return teams;
 };
 
 export default balanceByPair;

@@ -2,7 +2,7 @@ import './Team.css';
 import { ITeamProps } from '@/types';
 import TeamPlayer from './TeamPlayer';
 
-const Team = ({ players, name }: ITeamProps) => {
+const Team = ({ teamInfo, name }: ITeamProps) => {
     const getRoleId = (index: number) => Math.round(index/2);
     return (
         <div
@@ -13,20 +13,17 @@ const Team = ({ players, name }: ITeamProps) => {
                 className={'team-players'}
             >
                 {
-                    players ?
-                    Object.values(players).map(
-                    (item, index) =>
-                        Array.isArray(item) ? item.map(
-                            player =>
+                    teamInfo ?
+                    Object.entries(teamInfo).map(
+                        (item, itemIndex) =>
+                        Array.isArray(item[1]) &&
+                        item[1].map((player, index) =>
                             <TeamPlayer
+                                roleId={itemIndex}
                                 player={player}
-                                roleId={index}
+                                key={`${item[0]}-${index}`}
                             />
-                        ) :
-                        <TeamPlayer
-                            player={item}
-                            roleId={index}
-                        />
+                        )
                     ) :
                     [...new Array(5)].map(
                         (item, index) =>

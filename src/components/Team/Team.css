@@ -1,11 +1,14 @@
 .team-info {
-    background-color: rgb(59, 58, 58);
     padding: 10px 30px;
     border-radius: 4px;
     color: aliceblue;
 }
 .team-players {
-    background-color: rgb(86, 87, 87);
+    background: linear-gradient(
+        to bottom right,
+        rgb(73, 75, 75),
+        rgb(51, 49, 49)
+    );
     padding: 8px;
     float: none;
     width: 420px;

@@ -11,13 +11,13 @@ const TeamsBlock = () => {
         >
             <Team
                 name={'Team A'}
-                players={teamPlayers[0]}
+                teamInfo={teamPlayers[0]}
                 key={'Team A'}
             />
             <h3>VS</h3>
             <Team
                 name={'Team B'}
-                players={teamPlayers[1]}
+                teamInfo={teamPlayers[1]}
                 key={'Team B'}
             />
         </div>

@@ -1,25 +1,13 @@
 "use client";
+
 import './AllPlayers.css';
 import { useAppSelector } from '@/redux/store';
-import Player from '../Player/Player';
-import ClassicButton from '../ui/ClassicButton/ClassicButton';
-import { useDispatch } from 'react-redux';
-import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
-import balanceByPair from '@/scripts/balanceByPair';
-import { ITeam } from '@/types';
+import StorageButtons from '../StorageButtons/StorageButtons';
+import PlayersList from './PlayersList';
+import BalanceActions from '../BalanceActions/BalanceActions';
 
 const AllPlayers = () => {
     const players = useAppSelector(state => state.allPlayersReducer.value);
-    const dispatch = useDispatch();
-
-    const balanceHandle = () => {
-        // if(players.length < 10)
-        //     return;
-        dispatch(clearAllTeams());
-        const teams: ITeam[] = [];
-        balanceByPair(players);
-        // dispatch(addTeam(teamA));
-    };
 
     return (
         <section
@@ -27,26 +15,13 @@ const AllPlayers = () => {
         >
             <h2>All Players</h2>
             <span>Number of players: <b>{players.length}</b></span>
-            <div
-                className={'players-list'}
-            >
-                {
-                    players.map(
-                        (player, index) =>
-                        <Player
-                            key={index}
-                            {...player}
-                        />
-                    )
-                }
-            </div>
-            <ClassicButton
-                onClick={balanceHandle}
-                text={'Balance'}
+            <PlayersList
+                players={players}
             />
-            <ClassicButton
-                text={'Save'}
+            <BalanceActions
+                players={players}
             />
+            <StorageButtons />
         </section>
     );
 };
