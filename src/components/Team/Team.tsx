@@ -9,7 +9,9 @@ const Team = ({ teamInfo, name }: ITeamProps) => {
         <div
             className={'team-info'}
         >
-            <h1>{name} [{teamInfo.score}]</h1>
+            {
+                teamInfo && <h1>{name} [{teamInfo.score}]</h1>
+            }
             <div
                 className={'team-players'}
             >

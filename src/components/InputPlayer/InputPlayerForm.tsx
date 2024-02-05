@@ -39,6 +39,13 @@ const InputPlayerForm = () => {
             }
         };
         dispatch(addPlayer(player));
+        setTimeout(() => {
+            const scrollDiv = document.getElementsByClassName('scrool-div')[0];
+            if(scrollDiv)
+                scrollDiv.scrollIntoView({
+                    behavior: "smooth"
+                });
+        }, 0.1);
     };
 
     return (

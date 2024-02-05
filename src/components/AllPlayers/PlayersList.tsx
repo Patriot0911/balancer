@@ -15,6 +15,9 @@ const PlayersList = ({ players }: IPlayersListProps) => {
                     />
                 )
             }
+            <div
+                className={'scrool-div'}
+            />
         </div>
     );
 };
