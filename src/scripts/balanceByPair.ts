@@ -32,10 +32,17 @@ const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: I
                 continue;
             if(!roles[roleKey])
                 continue;
-            const roleQuota = (topRoles && topRoles[roleKey] ? 2 : 1)*GLOBAL_COUNTS[roleKey];
+           if(role === 'tank') {
+                const supportAndDamageCount = players.filter((player) => player.roles.support && player.roles.damage).length;
+                if(
+                    supportAndDamageCount - counts.support < GLOBAL_COUNTS.support ||
+                    supportAndDamageCount - counts.damage < GLOBAL_COUNTS.damage
+                )
+                    return false;
+            }
+            const roleQuota = (topRoles && topRoles[roleKey] ? 2 : 1);
             if(counts[roleKey]-roleQuota < GLOBAL_COUNTS[roleKey]*2)
                 return false;
-            // console.log(counts[roleKey]);
         };
         return true;
     };
@@ -43,8 +50,9 @@ const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: I
         const curPlayer = players[i];
         if(!curPlayer.roles[role])
             continue;
-        if(!isAcceptableUser(curPlayer.roles))
+        if(!isAcceptableUser(curPlayer.roles)) {
             continue;
+        }
         const pairInfo: IPairInfo = {
             gap: Number.MAX_SAFE_INTEGER,
             player1Index: i,
@@ -76,9 +84,9 @@ const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: I
             (item, index) => item.player1Index === pair.player2Index && pairIndex < index
         )?.player2Index
     );
-    const resPairs = pairsWithoutRepeat.filter((pair, pairIndex) => {
+    const resPairs = pairsWithoutRepeat.filter(pair => {
         const snakePair = pairsWithoutRepeat.find(
-            (item, index) => pair.player1Index === item.player2Index
+            item => pair.player1Index === item.player2Index
         );
         return !snakePair || snakePair.gap > pair.gap;
     });
@@ -96,12 +104,12 @@ const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefin
         initCounts.damage < GLOBAL_COUNTS.damage*teamCount
     )
         return;
-    const teams: any[] = [];
+    const teams: ITeamInfo[] = [];
     for(let i = 0; i < teamCount; i++) {
-        const teamInfo = {
-            tank: new Array(GLOBAL_COUNTS.tank) as IPlayer[],
-            damage: new Array(GLOBAL_COUNTS.damage) as IPlayer[],
-            support: new Array(GLOBAL_COUNTS.support) as IPlayer[],
+        const teamInfo: ITeamInfo = {
+            tank: new Array(GLOBAL_COUNTS.tank),
+            damage: new Array(GLOBAL_COUNTS.damage),
+            support: new Array(GLOBAL_COUNTS.support),
             score: 0
         };
         teams.push(teamInfo);
@@ -113,6 +121,17 @@ const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefin
             const { player1Index, player2Index } = pairs[i];
             const firstPlayer = curPlayers[player1Index];
             const secondPlayer = curPlayers[player2Index!];
+            if(
+                teams[k].score > teams[k+1].score &&
+                firstPlayer.roles[role]!.rankValue > secondPlayer.roles[role]!.rankValue
+            ) {
+                teams[k+1][role].push(firstPlayer);
+                teams[k+1].score += firstPlayer.roles[role]!.rankValue;
+                teams[k][role].push(secondPlayer);
+                teams[k].score += secondPlayer.roles[role]!.rankValue;
+                usedIndeces.push(player1Index, player2Index!);
+                continue;
+            };
             teams[k][role].push(firstPlayer);
             teams[k].score += firstPlayer.roles[role]!.rankValue;
             teams[k+1][role].push(secondPlayer);
@@ -132,7 +151,6 @@ const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefin
                 return;
             const sortedPairs = pairs.sort(sortCond);
             const usedIndeces = pushRolesToTeams(roleKey, sortedPairs);
-            console.log(sortedPairs);
             curPlayers = curPlayers.filter((item, index) => !usedIndeces.includes(index));
         };
     };

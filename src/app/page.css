@@ -2,3 +2,10 @@ main {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 }
+
+@media (width < 1200px) {
+    main {
+        display: flex;
+        flex-direction: column;
+    }
+}

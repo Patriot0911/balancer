@@ -48,3 +48,47 @@
         opacity: 100%;
     }
 }
+@media (width < 1500px) {
+    .team-players {
+        width: 300px;
+    }
+    .team-player-container .team-player-role-img {
+        height: 45px;
+        width: 45px;
+    }
+    .team-player-container .player-container h2 {
+        font-size: 15px;
+    }
+}
+@media (width < 1200px) {
+    .team-player-container .team-player-role-img {
+        height: 35px;
+        width: 35px;
+    }
+}
+@media (width < 850px) {
+    .team-info {
+        padding: 5px;
+    }
+}
+@media (width < 740px) {
+    .team-player-container .player-container h2 {
+        font-size: 12px;
+    }
+    .team-info h1 {
+        font-size: 20px;
+    }
+    .team-players {
+        width: 125px;
+    }
+    .team-player-container .player-container .player-roles-container {
+        display: none;
+    }
+    .team-player-container .team-player-role-img {
+        height: 25px;
+        width: 25px;
+    }
+    .team-player-container .role-continer {
+        width: 25px;
+    }
+}

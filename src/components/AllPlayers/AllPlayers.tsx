@@ -8,7 +8,6 @@ import BalanceActions from '../BalanceActions/BalanceActions';
 
 const AllPlayers = () => {
     const players = useAppSelector(state => state.allPlayersReducer.value);
-
     return (
         <section
             className={'all-pls'}

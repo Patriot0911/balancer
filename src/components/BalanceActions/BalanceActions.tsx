@@ -21,10 +21,18 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
         };
     };
 
-    return <ClassicButton
-        onClick={balanceHandle}
-        text={'Balance'}
-    />;
+    return (
+        <div>
+            <ClassicButton
+                onClick={balanceHandle}
+                text={'Balance by pair'}
+            />
+            <ClassicButton
+                // onClick={balanceHandle}
+                text={'Balance by total'}
+            />
+        </div>
+    );
 };
 
 export default BalanceActions;

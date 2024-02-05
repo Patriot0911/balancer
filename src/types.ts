@@ -101,3 +101,7 @@ export interface ITeamCounts {
     tank: number;
     support: number;
 };
+
+export interface ITeamPlayerListProps {
+    teamInfo: ITeamInfo;
+};

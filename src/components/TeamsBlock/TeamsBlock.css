@@ -10,3 +10,9 @@
     font-size: 27px;
     user-select: none;
 }
+
+@media (width < 850) {
+    .teams {
+        gap: 0px;
+    }
+}

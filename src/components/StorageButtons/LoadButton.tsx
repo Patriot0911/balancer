@@ -3,6 +3,7 @@
 import { addPlayer, clearAllPlayers } from "@/redux/features/all-players-slice";
 import { useDispatch } from "react-redux";
 import ClassicButton from "../ui/ClassicButton/ClassicButton";
+import { IPlayer } from "@/types";
 
 const LoadButton = () => {
     const dispatch = useDispatch();
@@ -13,7 +14,17 @@ const LoadButton = () => {
         const players = JSON.parse(rawPlayers);
         dispatch(clearAllPlayers());
         for(const player of players) {
-            dispatch(addPlayer(player));
+            const playerInfo: IPlayer = {
+                name: player.name,
+                roles: {
+                    tank: player.roles.tank,
+                    damage: player.roles.damage,
+                    support:  player.roles.support
+                }
+            };
+            dispatch(
+                addPlayer(playerInfo)
+            );
         };
     };
     return <ClassicButton
