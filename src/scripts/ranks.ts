@@ -1,4 +1,4 @@
-import { IProdRankData, IRank, ISimpleRankData } from "@/types";
+import { IProdRankData, ISimpleRankData } from "@/types";
 import ranks from "./ranksList";
 
 const isNum = (str: string) => !isNaN(new Number(str).valueOf());
@@ -37,16 +37,16 @@ const getRankNameByValue = (value: number) => {
 export const getRank = (rawString?: string): IProdRankData | undefined => {
     if(!rawString)
         return;
-    const trimmedString = rawString.replace(/\s+/g, '');
-    if(isNum(trimmedString)) {
-        const rankValue = parseInt(trimmedString);
+    const editedString = rawString.replace(/\s+/g, '').toLowerCase();
+    if(isNum(editedString)) {
+        const rankValue = parseInt(editedString);
         const rankName = getRankNameByValue(rankValue);
         return {
             rankName,
             rankValue
         };
     }
-    const rankData = getPossibleRankData(trimmedString);
+    const rankData = getPossibleRankData(editedString);
     if(!rankData)
         return;
     const { value, str } = rankData;

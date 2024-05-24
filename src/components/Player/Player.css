@@ -9,6 +9,7 @@
     min-height: 65px;
     user-select: none;
     overflow: hidden;
+    justify-content: center;
 }
 .player-container h2 {
     text-align: left;

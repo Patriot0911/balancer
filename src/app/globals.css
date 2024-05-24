@@ -5,7 +5,7 @@ main {
     min-height: 100vh;
     background: linear-gradient(
         to right bottom,
-        rgb(15, 15, 15), rgb(26, 23, 23) 90%, rgb(9, 7, 7)
+        rgb(3, 3, 3), rgb(26, 23, 23) 60%, rgb(9, 7, 7)
     );
     background-size: cover;
     background-repeat: no-repeat;

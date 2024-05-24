@@ -1,4 +1,4 @@
-import { ITeam, ITeamInitialState } from '@/types';
+import { ITeamInfo, ITeamInitialState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: ITeamInitialState = {
@@ -10,7 +10,7 @@ export const teams = createSlice({
     initialState,
     reducers: {
         clearAllTeams: () => initialState,
-        addTeam: (state, action: PayloadAction<ITeam>) => {
+        addTeam: (state, action: PayloadAction<ITeamInfo>) => {
             return {
                 value: [
                     ...state.value,

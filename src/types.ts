@@ -56,7 +56,7 @@ export interface IPlayerRoleProps extends IProdRankData {
 };
 
 export interface ITeamProps {
-    players: ITeam;
+    teamInfo: ITeamInfo;
     name: string;
 };
 
@@ -72,17 +72,36 @@ export interface IRoleContainerProps {
 };
 
 export interface ITeamInitialState {
-    value: ITeam[];
+    value: ITeamInfo[];
 }
 
-export interface ITeam {
-    tank: IPlayer;
-    damage: [
-        IPlayer,
-        IPlayer
-    ];
-    supports: [
-        IPlayer,
-        IPlayer
-    ];
+export interface ITeamInfo {
+    tank: IPlayer[];
+    damage: IPlayer[];
+    support: IPlayer[];
+    score: number;
+};
+
+export interface IPlayersListProps {
+    players: IPlayer[];
+};
+
+export interface IBalanceActionsProps {
+    players: IPlayer[]
+};
+
+export interface IPairInfo {
+    gap: number;
+    player1Index: number;
+    player2Index: number | null;
+};
+
+export interface ITeamCounts {
+    damage: number;
+    tank: number;
+    support: number;
+};
+
+export interface ITeamPlayerListProps {
+    teamInfo: ITeamInfo;
 };

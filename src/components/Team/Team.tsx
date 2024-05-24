@@ -1,40 +1,26 @@
 import './Team.css';
 import { ITeamProps } from '@/types';
 import TeamPlayer from './TeamPlayer';
+import EmptyTeam from './EmptyTeam';
+import TeamPlayerList from './TeamPlayerList';
 
-const Team = ({ players, name }: ITeamProps) => {
-    const getRoleId = (index: number) => Math.round(index/2);
+const Team = ({ teamInfo, name }: ITeamProps) => {
     return (
         <div
             className={'team-info'}
         >
-            <h1>{name}</h1>
+            {
+                teamInfo && <h1>{name} [{teamInfo.score}]</h1>
+            }
             <div
                 className={'team-players'}
             >
                 {
-                    players ?
-                    Object.values(players).map(
-                    (item, index) =>
-                        Array.isArray(item) ? item.map(
-                            player =>
-                            <TeamPlayer
-                                player={player}
-                                roleId={index}
-                            />
-                        ) :
-                        <TeamPlayer
-                            player={item}
-                            roleId={index}
-                        />
-                    ) :
-                    [...new Array(5)].map(
-                        (item, index) =>
-                        <TeamPlayer
-                            roleId={getRoleId(index)}
-                            key={index}
-                        />
-                    )
+                    teamInfo ?
+                    <TeamPlayerList
+                        teamInfo={teamInfo}
+                    /> :
+                    <EmptyTeam />
                 }
             </div>
         </div>
