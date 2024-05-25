@@ -30,9 +30,8 @@ const isAcceptableUser = (
     role: keyof IPlayerRoles,
     counts: ITeamCounts,
     ignoreRoles: (keyof IPlayerRoles)[],
-    roles: IPlayerRoles,
-    topRoles?: IPlayerRoles
-) => {
+) => (roles: IPlayerRoles, topRoles?: IPlayerRoles): boolean => {
+    if (!roles[role]) return false;
     const roleKeys = Object.keys(roles);
     for (let i = 0; i < roleKeys.length; i++) {
         const roleKey = roleKeys[i] as keyof IPlayerRoles;
@@ -55,51 +54,39 @@ const isAcceptableUser = (
     return true;
 };
 
-export const pairPlayers = (players: IPlayer[], role: keyof IPlayerRoles, counts: ITeamCounts, ignoreRoles: (keyof IPlayerRoles)[]) => {
+const initPair = (player1Index: number): IPairInfo => ({
+    gap: Number.MAX_SAFE_INTEGER,
+    player1Index,
+    player2Index: -1
+});
+
+export const pairPlayers = (
+    players: IPlayer[],
+    counts: ITeamCounts,
+    ignoreRoles: Role[],
+    role: Role,
+): IPairInfo[] => {
     const pairs: IPairInfo[] = [];
-    for (let i = 0; i < players.length; i++) {
-        const curPlayer = players[i];
-        if (!curPlayer.roles[role])
-            continue;
-        if (!isAcceptableUser(
-            players,
-            role,
-            counts,
-            ignoreRoles,
-            curPlayer.roles
-        )) {
-            continue;
+    const isValid = isAcceptableUser(
+        players,
+        role,
+        counts,
+        ignoreRoles,
+    );
+    for (let player1Index = 0; player1Index < players.length; player1Index++) {
+        const player1 = players[player1Index];
+        if (!isValid(player1.roles)) continue;
+        const pair = initPair(player1Index);
+        const player1Rank = player1.roles[role]!.rankValue;
+        for (let player2Index = 0; player2Index < players.length; player2Index++) {
+            if (player1Index === player2Index) continue;
+            const player2 = players[player2Index];
+            if (!isValid(player2.roles, player1.roles)) continue;
+            const player2Rank = player2.roles[role]!.rankValue;
+            const gap = Math.abs(player1Rank - player2Rank);
+            if (pair.gap > gap) Object.assign(pair, { gap, player2Index });
         }
-        const pairInfo: IPairInfo = {
-            gap: Number.MAX_SAFE_INTEGER,
-            player1Index: i,
-            player2Index: null
-        };
-        const rankValue = curPlayer.roles[role]!.rankValue;
-        for (let k = 0; k < players.length; k++) {
-            if (i === k)
-                continue;
-            const subPlayer = players[k];
-            if (!subPlayer.roles[role])
-                continue;
-            if (!isAcceptableUser(
-                players,
-                role,
-                counts,
-                ignoreRoles,
-                subPlayer.roles,
-                curPlayer.roles
-            ))
-                continue;
-            const subRankValue = subPlayer.roles[role]!.rankValue;
-            const gap = Math.abs(rankValue - subRankValue);
-            if (pairInfo.gap > gap) {
-                pairInfo.gap = gap;
-                pairInfo.player2Index = k;
-            };
-        };
-        if (pairInfo.player2Index !== null)
-            pairs.push(pairInfo);
+        if (pair.player2Index !== -1) pairs.push(pair);
     }
     return pairs;
 };
@@ -107,17 +94,17 @@ export const pairPlayers = (players: IPlayer[], role: keyof IPlayerRoles, counts
 export const getClosestPairs = (
     players: IPlayer[],
     counts: ITeamCounts,
-    ignoreRoles: Role[],
+    ignoredRoles: Role[],
     role: Role,
 ): IPairInfo[] => {
-    const pairs = pairPlayers(players, role, counts, ignoreRoles);
+    const pairs = pairPlayers(players, counts, ignoredRoles, role);
     const unique = pairs.filter((pair, pairIndex) => {
         const transcendent = pairs.find((item, index) =>
             item.player1Index === pair.player2Index && pairIndex < index
         );
         return pair.player1Index !== transcendent?.player2Index
     });
-    const res = unique.filter(pair => {
+    const res = unique.filter((pair) => {
         const snakePair = unique.find((item) =>
             pair.player1Index === item.player2Index
         );
@@ -146,13 +133,13 @@ const addToTeams = (
     for (let i = 0, k = 0; i < teams.length / 2; i++, k += 2) {
         const pair = pairs[i];
         const { player1Index, player2Index } = pair;
-        const firstPlayer = players[player1Index];
-        const secondPlayer = players[player2Index!];
-        const firstTeam = teams[k];
-        const secondTeam = teams[k + 1];
-        addPlayerToTeam(firstTeam, firstPlayer, role)
-        addPlayerToTeam(secondTeam, secondPlayer, role);
-        added.push(player1Index, player2Index!);
+        const player1 = players[player1Index];
+        const player2 = players[player2Index];
+        const team1 = teams[k];
+        const team2 = teams[k + 1];
+        addPlayerToTeam(team1, player1, role)
+        addPlayerToTeam(team2, player2, role);
+        added.push(player1Index, player2Index);
     }
     return added;
 };

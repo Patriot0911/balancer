@@ -99,7 +99,7 @@ export interface IBalanceActionsProps {
 export interface IPairInfo {
     gap: number;
     player1Index: number;
-    player2Index: number | null;
+    player2Index: number;
 };
 
 export interface ITeamCounts {

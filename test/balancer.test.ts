@@ -99,7 +99,7 @@ describe('validateInput', () => {
 
 describe('pairPlayer', () => {
   test('should pair tanks correctly', () => {
-    const result = pairPlayers(INPUT, Role.Tank, COUNTS, [Role.Tank])
+    const result = pairPlayers(INPUT, COUNTS, [Role.Tank], Role.Tank)
 
     const expected = [
       { gap: 5, player1Index: 0, player2Index: 10 },
@@ -111,7 +111,7 @@ describe('pairPlayer', () => {
   })
 
   test('should pair damagers correctly', () => {
-    const result = pairPlayers(INPUT, Role.Damage, COUNTS, [Role.Damage, Role.Tank])
+    const result = pairPlayers(INPUT, COUNTS, [Role.Damage, Role.Tank], Role.Damage)
 
     const expected = [
       { gap: 1, player1Index: 1, player2Index: 4 },
@@ -124,7 +124,7 @@ describe('pairPlayer', () => {
   })
 
   test('should pair supports correctly', () => {
-    const result = pairPlayers(INPUT, Role.Support, COUNTS, [Role.Tank, Role.Damage, Role.Support])
+    const result = pairPlayers(INPUT, COUNTS, [Role.Tank, Role.Damage, Role.Support], Role.Support)
 
     const expected = [
       { gap: 0, player1Index: 5, player2Index: 6 },
