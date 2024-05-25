@@ -92,8 +92,6 @@ describe('balanceByPair', () => {
 
     const result = balanceByPair(input)
 
-    console.dir(result, { depth: null })
-
-    expect(undefined).toBeUndefined()
+    expect(result).toBeUndefined()
   })
 })
