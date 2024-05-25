@@ -3,7 +3,8 @@ import {
     IPlayer,
     IPlayerRoles,
     ITeamCounts,
-    ITeamInfo
+    ITeamInfo,
+    Role,
 } from "@/types";
 
 const GLOBAL_COUNTS = {
@@ -12,15 +13,17 @@ const GLOBAL_COUNTS = {
     support: 2
 };
 
-const getCounts = (players: IPlayer[]): ITeamCounts => ({
-    damage: players.filter(item => item.roles.damage).length,
-    support: players.filter(item => item.roles.support).length,
-    tank: players.filter(item => item.roles.tank).length
+const TEAM_PLAYERS_COUNT = Object.values(GLOBAL_COUNTS)
+    .reduce((total, count) => total + count, 0);
+
+const getRoleCount = (players: IPlayer[], role: Role) => 
+    players.filter((player) => player.roles[role]).length;
+
+const getRoleCounts = (players: IPlayer[]): ITeamCounts => ({
+    damage: getRoleCount(players, Role.Damage),
+    support: getRoleCount(players, Role.Support),
+    tank: getRoleCount(players, Role.Tank)
 });
-
-const sortCond = (pairA: IPairInfo, pairB: IPairInfo) => pairA.gap-pairB.gap;
-
-const getTeamReqCount = () => Object.values(GLOBAL_COUNTS).reduce((lastItem, curItem) => lastItem + curItem, 0);
 
 const isAcceptableUser = (
     players: IPlayer[],
@@ -134,20 +137,6 @@ const pushRolesToTeams = (curPlayers: IPlayer[], teams: ITeamInfo[], role: keyof
     return usedIndeces;
 };
 
-export const validateInput = (players: IPlayer[], teamCount: number): boolean => {
-    const teamReqCOunt = getTeamReqCount();
-    if(players.length < teamReqCOunt*teamCount || teamCount % 2 !== 0)
-        return false;
-    const initCounts: ITeamCounts = getCounts(players);
-    if(
-        initCounts.tank < GLOBAL_COUNTS.tank*teamCount ||
-        initCounts.support < GLOBAL_COUNTS.support*teamCount ||
-        initCounts.damage < GLOBAL_COUNTS.damage*teamCount
-    )
-        return false;
-    return true;
-};
-
 const initTeams = (teamCount: number): ITeamInfo[] => {
     const teams: ITeamInfo[] = [];
     for(let i = 0; i < teamCount; i++) {
@@ -162,10 +151,21 @@ const initTeams = (teamCount: number): ITeamInfo[] => {
     return teams;
 };
 
+export const validateInput = (
+    players: IPlayer[],
+    teamCount: number,
+    initCounts = getRoleCounts(players),
+): boolean => (
+    teamCount % 2 === 0 &&
+    players.length >= TEAM_PLAYERS_COUNT * teamCount &&
+    initCounts.tank >= GLOBAL_COUNTS.tank * teamCount &&
+    initCounts.support >= GLOBAL_COUNTS.support * teamCount &&
+    initCounts.damage >= GLOBAL_COUNTS.damage * teamCount
+);
+
 export const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefined => {
     const isValid = validateInput(players, teamCount);
-    if(!isValid)
-        return;
+    if (!isValid) return;
     const teams = initTeams(teamCount);
     let curPlayers = [...players];
     const ignoreRoles: (keyof IPlayerRoles)[] = [];
@@ -173,16 +173,13 @@ export const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | 
         const roleKey = role as keyof IPlayerRoles;
         ignoreRoles.push(roleKey);
         for(let i = 0; i < GLOBAL_COUNTS[roleKey]; i++) {
-            console.log(roleKey + ' ' + i);
-            const counts = getCounts(curPlayers);
+            const counts = getRoleCounts(curPlayers);
             const pairs = getClosestPairs(curPlayers, roleKey, counts, ignoreRoles);
-            // console.log(pairs);
             if(!pairs || pairs.length < teamCount/2)
                 return;
-            const sortedPairs = pairs.sort(sortCond);
+            const sortedPairs = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap);
             const usedIndeces = pushRolesToTeams(curPlayers, teams, roleKey, sortedPairs);
-            curPlayers = curPlayers.filter((item, index) => !usedIndeces.includes(index));
-            // console.log(curPlayers);
+            curPlayers = curPlayers.filter((_, index) => !usedIndeces.includes(index));
         };
     };
     return teams;
