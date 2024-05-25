@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest'
 import { balanceByPair, validateInput, pairPlayers, getClosestPairs } from '@/scripts/balanceByPair'
-import { IPlayer } from '@/types'
+import { IPlayer, Role } from '@/types'
 
 const INPUT: IPlayer[] = [
   {
@@ -99,7 +99,7 @@ describe('validateInput', () => {
 
 describe('pairPlayer', () => {
   test('should pair tanks correctly', () => {
-    const result = pairPlayers(INPUT, 'tank', COUNTS, ['tank'])
+    const result = pairPlayers(INPUT, Role.Tank, COUNTS, [Role.Tank])
 
     const expected = [
       { gap: 5, player1Index: 0, player2Index: 10 },
@@ -111,7 +111,7 @@ describe('pairPlayer', () => {
   })
 
   test('should pair damagers correctly', () => {
-    const result = pairPlayers(INPUT, 'damage', COUNTS, ['tank', 'damage'])
+    const result = pairPlayers(INPUT, Role.Damage, COUNTS, [Role.Damage, Role.Tank])
 
     const expected = [
       { gap: 1, player1Index: 1, player2Index: 4 },
@@ -124,7 +124,7 @@ describe('pairPlayer', () => {
   })
 
   test('should pair supports correctly', () => {
-    const result = pairPlayers(INPUT, 'support', COUNTS, ['tank', 'damage', 'support'])
+    const result = pairPlayers(INPUT, Role.Support, COUNTS, [Role.Tank, Role.Damage, Role.Support])
 
     const expected = [
       { gap: 0, player1Index: 5, player2Index: 6 },
@@ -140,7 +140,7 @@ describe('pairPlayer', () => {
 
 describe('getClosestPairs', () => {
   test('should get closest tank pairs correctly', () => {
-    const result = getClosestPairs(INPUT, 'tank', COUNTS, ['tank'])
+    const result = getClosestPairs(INPUT, COUNTS, [Role.Tank], Role.Tank)
 
     const expected = [
       { gap: 26, player1Index: 2, player2Index: 10 },
@@ -151,7 +151,7 @@ describe('getClosestPairs', () => {
   })
 
   test('should get closest damager pairs correctly', () => {
-    const result = getClosestPairs(INPUT, 'damage', COUNTS, ['tank', 'damage'])
+    const result = getClosestPairs(INPUT, COUNTS, [Role.Tank, Role.Damage], Role.Damage)
 
     const expected = [
       { gap: 1, player1Index: 4, player2Index: 1 },
@@ -162,7 +162,7 @@ describe('getClosestPairs', () => {
   })
 
   test('should get closest support pairs correctly', () => {
-    const result = getClosestPairs(INPUT, 'support', COUNTS, ['tank', 'damage', 'support'])
+    const result = getClosestPairs(INPUT, COUNTS, [Role.Tank, Role.Damage, Role.Support], Role.Support)
 
     const expected = [
       { gap: 0, player1Index: 6, player2Index: 5 },
