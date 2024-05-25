@@ -137,19 +137,15 @@ const pushRolesToTeams = (curPlayers: IPlayer[], teams: ITeamInfo[], role: keyof
     return usedIndeces;
 };
 
-const initTeams = (teamCount: number): ITeamInfo[] => {
-    const teams: ITeamInfo[] = [];
-    for(let i = 0; i < teamCount; i++) {
-        const teamInfo: ITeamInfo = {
-            tank: [],
-            damage: [],
-            support: [],
-            score: 0
-        };
-        teams.push(teamInfo);
-    };
-    return teams;
-};
+const initTeam = (): ITeamInfo => ({
+    tank: [],
+    damage: [],
+    support: [],
+    score: 0
+});
+
+const initTeams = (teamCount: number): ITeamInfo[] => 
+    Array.from({ length: teamCount }).map(initTeam);
 
 export const validateInput = (
     players: IPlayer[],
