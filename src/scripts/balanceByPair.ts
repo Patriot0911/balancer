@@ -25,32 +25,28 @@ const getRolesCounts = (players: IPlayer[]): ITeamCounts => ({
     tank: getRolesCount(players, Role.Tank)
 });
 
-const isAcceptableUser = (
+const isAcceptablePlayer = (
     players: IPlayer[],
-    role: keyof IPlayerRoles,
     counts: ITeamCounts,
-    ignoreRoles: (keyof IPlayerRoles)[],
+    ignoreRoles: Role[],
+    role: Role,
 ) => (roles: IPlayerRoles, topRoles?: IPlayerRoles): boolean => {
     if (!roles[role]) return false;
-    const roleKeys = Object.keys(roles);
-    for (let i = 0; i < roleKeys.length; i++) {
-        const roleKey = roleKeys[i] as keyof IPlayerRoles;
-        if (ignoreRoles.includes(roleKey))
-            continue;
-        if (!roles[roleKey])
-            continue;
-        if (role === 'tank') {
-            const supportAndDamageCount = players.filter((player) => player.roles.support && player.roles.damage).length;
-            if (
-                supportAndDamageCount - counts.support < TEAM_ROLES_COUNT.support ||
-                supportAndDamageCount - counts.damage < TEAM_ROLES_COUNT.damage
-            )
-                return false;
+    for (const roleKey of Object.values(Role)) {
+        if (ignoreRoles.includes(roleKey) || !roles[roleKey]) continue;
+        if (role === Role.Tank) {
+            const supportAndDamageCount = players.filter((player) =>
+                player.roles.support && player.roles.damage
+            ).length;
+            const supportsLack = supportAndDamageCount - counts.support < TEAM_ROLES_COUNT.support
+            const damagersLack = supportAndDamageCount - counts.damage < TEAM_ROLES_COUNT.damage
+            if (supportsLack || damagersLack) return false;
         }
-        const roleQuota = (topRoles && topRoles[roleKey] ? 2 : 1);
-        if (counts[roleKey] - roleQuota < TEAM_ROLES_COUNT[roleKey] * 2)
-            return false;
-    };
+        const roleQuota = topRoles && topRoles[roleKey] ? 2 : 1;
+        const available = counts[roleKey] - roleQuota;
+        const required = TEAM_ROLES_COUNT[roleKey] * 2;
+        if (available < required) return false;
+    }
     return true;
 };
 
@@ -67,11 +63,11 @@ export const pairPlayers = (
     role: Role,
 ): IPairInfo[] => {
     const pairs: IPairInfo[] = [];
-    const isValid = isAcceptableUser(
+    const isValid = isAcceptablePlayer(
         players,
-        role,
         counts,
         ignoreRoles,
+        role,
     );
     for (let player1Index = 0; player1Index < players.length; player1Index++) {
         const player1 = players[player1Index];
