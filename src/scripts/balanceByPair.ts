@@ -22,7 +22,7 @@ const sortCond = (pairA: IPairInfo, pairB: IPairInfo) => pairA.gap-pairB.gap;
 
 const getTeamReqCount = () => Object.values(GLOBAL_COUNTS).reduce((lastItem, curItem) => lastItem + curItem, 0);
 
-export const isAcceptableUser = (
+const isAcceptableUser = (
     players: IPlayer[],
     role: keyof IPlayerRoles,
     counts: ITeamCounts,
@@ -119,7 +119,7 @@ export const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, co
     return resPairs;
 };
 
-export const pushRolesToTeams = (curPlayers: IPlayer[], teams: ITeamInfo[], role: keyof IPlayerRoles, pairs: IPairInfo[]) => {
+const pushRolesToTeams = (curPlayers: IPlayer[], teams: ITeamInfo[], role: keyof IPlayerRoles, pairs: IPairInfo[]) => {
     const usedIndeces: number[] = [];
     for(let i = 0, k = 0; i < teams.length/2; i++, k+=2) {
         const { player1Index, player2Index } = pairs[i];
