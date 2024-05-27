@@ -6,15 +6,21 @@ export enum OverwatchRoles {
     SUPPORT = 2
 };
 
-export interface IPlayer {
-    name: string;
-    roles: IPlayerRoles;
+export enum Role {
+    Tank = 'tank',
+    Damage = 'damage',
+    Support = 'support'
 };
 
 export interface IPlayerRoles {
-    tank?: IProdRankData;
-    damage?: IProdRankData;
-    support?: IProdRankData;
+    [Role.Tank]?: IProdRankData;
+    [Role.Damage]?: IProdRankData;
+    [Role.Support]?: IProdRankData;
+};
+
+export interface IPlayer {
+    name: string;
+    roles: IPlayerRoles;
 };
 
 export interface IErrorInfoProps {
@@ -93,7 +99,7 @@ export interface IBalanceActionsProps {
 export interface IPairInfo {
     gap: number;
     player1Index: number;
-    player2Index: number | null;
+    player2Index: number;
 };
 
 export interface ITeamCounts {

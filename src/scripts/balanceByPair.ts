@@ -3,151 +3,201 @@ import {
     IPlayer,
     IPlayerRoles,
     ITeamCounts,
-    ITeamInfo
+    ITeamInfo,
+    Role,
 } from "@/types";
 
-const GLOBAL_COUNTS = {
+const TEAM_ROLES_COUNT = {
     tank: 1,
     damage: 2,
     support: 2
 };
 
-const getCounts = (players: IPlayer[]): ITeamCounts => ({
-    damage: players.filter(item => item.roles.damage).length,
-    support: players.filter(item => item.roles.support).length,
-    tank: players.filter(item => item.roles.tank).length
+const TEAM_PLAYERS_COUNT = Object.values(TEAM_ROLES_COUNT)
+    .reduce((total, count) => total + count, 0);
+
+const getRolesCount = (players: IPlayer[], role: Role) =>
+    players.filter((player) => player.roles[role]).length;
+
+const getRolesCounts = (players: IPlayer[]): ITeamCounts => ({
+    [Role.Damage]:      getRolesCount(players, Role.Damage),
+    [Role.Support]:     getRolesCount(players, Role.Support),
+    [Role.Tank]:        getRolesCount(players, Role.Tank)
 });
 
-const sortCond = (pairA: IPairInfo, pairB: IPairInfo) => pairA.gap-pairB.gap;
-
-const getTeamReqCount = () => Object.values(GLOBAL_COUNTS).reduce((lastItem, curItem) => lastItem + curItem, 0);
-
-const getClosestPairs = (players: IPlayer[], role: keyof IPlayerRoles, counts: ITeamCounts, ignoreRoles: (keyof IPlayerRoles)[]) => {
-    const pairs: IPairInfo[] = [];
-    const isAcceptableUser = (roles: IPlayerRoles, topRoles?: IPlayerRoles) => {
-        const roleKeys = Object.keys(roles);
-        for(let i = 0; i < roleKeys.length; i++) {
-            const roleKey = roleKeys[i] as keyof IPlayerRoles;
-            if(ignoreRoles.includes(roleKey))
-                continue;
-            if(!roles[roleKey])
-                continue;
-           if(role === 'tank') {
-                const supportAndDamageCount = players.filter((player) => player.roles.support && player.roles.damage).length;
-                if(
-                    supportAndDamageCount - counts.support < GLOBAL_COUNTS.support ||
-                    supportAndDamageCount - counts.damage < GLOBAL_COUNTS.damage
-                )
-                    return false;
-            }
-            const roleQuota = (topRoles && topRoles[roleKey] ? 2 : 1);
-            if(counts[roleKey]-roleQuota < GLOBAL_COUNTS[roleKey]*2)
-                return false;
-        };
-        return true;
-    };
-    for(let i = 0; i < players.length; i++) {
-        const curPlayer = players[i];
-        if(!curPlayer.roles[role])
-            continue;
-        if(!isAcceptableUser(curPlayer.roles)) {
-            continue;
+const isAcceptablePlayer = (
+    players: IPlayer[],
+    counts: ITeamCounts,
+    ignoredRoles: Role[],
+    role: Role,
+) => (roles: IPlayerRoles, topRoles?: IPlayerRoles): boolean => {
+    if (!roles[role]) return false;
+    for (const roleKey of Object.values(Role)) {
+        if (ignoredRoles.includes(roleKey) || !roles[roleKey]) continue;
+        /*
+         * Загальна ідея була у валідації кількості гравців з різними ролями
+         * зважаючи на те, що наша валідація починається з танка - то ми використовуємо саме такий спосіб перевірки
+         * проте якби ми починали не з танка - то цей шматок коду не давав би занадто багато
+         * To Rework  |
+         *           \/
+        */
+        if (role === Role.Tank) {
+            const supportAndDamageCount = players.filter((player) =>
+                player.roles[Role.Support] && player.roles[Role.Damage]
+            ).length;
+            const supportsLack = supportAndDamageCount - counts[Role.Support] < TEAM_ROLES_COUNT[Role.Support]
+            const damagersLack = supportAndDamageCount - counts[Role.Damage] < TEAM_ROLES_COUNT[Role.Damage]
+            if (supportsLack || damagersLack) return false;
         }
-        const pairInfo: IPairInfo = {
-            gap: Number.MAX_SAFE_INTEGER,
-            player1Index: i,
-            player2Index: null
-        };
-        const rankValue = curPlayer.roles[role]!.rankValue;
-        for(let k = 0; k < players.length; k++) {
-            if(i === k)
-                continue;
-            const subPlayer = players[k];
-            if(!subPlayer.roles[role])
-                continue;
-            if(!isAcceptableUser(subPlayer.roles, curPlayer.roles))
-                continue;
-            const subRankValue = subPlayer.roles[role]!.rankValue;
-            const gap = Math.abs(rankValue - subRankValue);
-            if(pairInfo.gap > gap) {
-                pairInfo.gap = gap;
-                pairInfo.player2Index = k;
-            };
-        };
-        if(pairInfo.player2Index !== null)
-            pairs.push(pairInfo);
+        const roleQuota = topRoles && topRoles[roleKey] ? 2 : 1;
+        const available = counts[roleKey] - roleQuota;
+        const required = TEAM_ROLES_COUNT[roleKey] * 2;
+        if (available < required) return false;
     }
-    if(pairs.length < 1)
-        return;
-    const pairsWithoutRepeat = pairs.filter((pair, pairIndex) =>
-        pair.player1Index !== pairs.find(
-            (item, index) => item.player1Index === pair.player2Index && pairIndex < index
-        )?.player2Index
+    return true;
+};
+
+const initPair = (player1Index: number): IPairInfo => ({
+    gap: Number.MAX_SAFE_INTEGER,
+    player1Index,
+    player2Index: -1
+});
+
+export const pairPlayers = (
+    players: IPlayer[],
+    counts: ITeamCounts,
+    ignoredRoles: Role[],
+    role: Role,
+): IPairInfo[] => {
+    const pairs: IPairInfo[] = [];
+    const isValid = isAcceptablePlayer(
+        players,
+        counts,
+        ignoredRoles,
+        role,
     );
-    const resPairs = pairsWithoutRepeat.filter(pair => {
-        const snakePair = pairsWithoutRepeat.find(
-            item => pair.player1Index === item.player2Index
+    for (let player1Index = 0; player1Index < players.length; player1Index++) {
+        const player1 = players[player1Index];
+        if (!isValid(player1.roles)) continue;
+        const pair = initPair(player1Index);
+        const player1Rank = player1.roles[role]!.rankValue;
+        for (let player2Index = 0; player2Index < players.length; player2Index++) {
+            if (player1Index === player2Index) continue;
+            const player2 = players[player2Index];
+            if (!isValid(player2.roles, player1.roles)) continue;
+            const player2Rank = player2.roles[role]!.rankValue;
+            const gap = Math.abs(player1Rank - player2Rank);
+            if (pair.gap > gap) Object.assign(pair, { gap, player2Index });
+        }
+        if (pair.player2Index !== -1) pairs.push(pair);
+    }
+    return pairs;
+};
+
+export const getClosestPairs = (
+    players: IPlayer[],
+    counts: ITeamCounts,
+    ignoredRoles: Role[],
+    role: Role,
+): IPairInfo[] => {
+    const pairs = pairPlayers(players, counts, ignoredRoles, role);
+    const unique = pairs.filter((pair, pairIndex) => {
+        const transcendent = pairs.find((item, index) =>
+            item.player1Index === pair.player2Index && pairIndex < index
+        );
+        return pair.player1Index !== transcendent?.player2Index
+    });
+    const res = unique.filter((pair) => {
+        const snakePair = unique.find((item) =>
+            pair.player1Index === item.player2Index
         );
         return !snakePair || snakePair.gap > pair.gap;
     });
-    return resPairs;
+    return res;
 };
 
-const balanceByPair = (players: IPlayer[], teamCount = 2): ITeamInfo[] | undefined => {
-    const teamReqCOunt = getTeamReqCount();
-    if(players.length < teamReqCOunt*teamCount || teamCount % 2 !== 0)
-        return;
-    const initCounts: ITeamCounts = getCounts(players);
-    if(
-        initCounts.tank < GLOBAL_COUNTS.tank*teamCount ||
-        initCounts.support < GLOBAL_COUNTS.support*teamCount ||
-        initCounts.damage < GLOBAL_COUNTS.damage*teamCount
-    )
-        return;
-    const teams: any[] = []; // improve
-    for(let i = 0; i < teamCount; i++) {
-        const teamInfo: ITeamInfo = {
-            tank: new Array(GLOBAL_COUNTS.tank),
-            damage: new Array(GLOBAL_COUNTS.damage),
-            support: new Array(GLOBAL_COUNTS.support),
-            score: 0
-        };
-        teams.push(teamInfo);
-    };
-    let curPlayers = [...players];
-    const pushRolesToTeams = (role: keyof IPlayerRoles, pairs: IPairInfo[]) => {
-        const usedIndeces: number[] = [];
-        for(let i = 0, k = 0; i < teamCount/2; i++, k+=2) {
-            const { player1Index, player2Index } = pairs[i];
-            const firstPlayer = curPlayers[player1Index];
-            const secondPlayer = curPlayers[player2Index!];
-            teams[k][role].push(firstPlayer);
-            teams[k].score += firstPlayer.roles[role]!.rankValue;
-            teams[k+1][role].push(secondPlayer);
-            teams[k+1][role].push(secondPlayer);
-            teams[k+1].score += secondPlayer.roles[role]!.rankValue;
-            usedIndeces.push(player1Index, player2Index!);
-        };
-        return usedIndeces;
-    };
-    const ignoreRoles: (keyof IPlayerRoles)[] = [];
-    for(const role of Object.keys(GLOBAL_COUNTS)) {
-        const roleKey = role as keyof IPlayerRoles;
-        ignoreRoles.push(roleKey);
-        for(let i = 0; i < GLOBAL_COUNTS[roleKey]; i++) {
-            console.log(roleKey + ' ' + i);
-            const counts = getCounts(curPlayers);
-            const pairs = getClosestPairs(curPlayers, roleKey, counts, ignoreRoles);
-            // console.log(pairs);
-            if(!pairs || pairs.length < teamCount/2)
-                return;
-            const sortedPairs = pairs.sort(sortCond);
-            const usedIndeces = pushRolesToTeams(roleKey, sortedPairs);
-            curPlayers = curPlayers.filter((item, index) => !usedIndeces.includes(index));
-            // console.log(curPlayers);
-        };
-    };
+const addPlayerToTeam = (team: ITeamInfo, player: IPlayer, role: Role): void => {
+    const rolePlayers = team[role];
+    rolePlayers.push(player);
+    const { rankValue } = player.roles[role]!;
+    team.score += rankValue;
+};
+
+/**
+ * @returns Array of added players indexes
+ */
+const addToTeams = (
+    players: IPlayer[],
+    teams: ITeamInfo[],
+    pairs: IPairInfo[],
+    role: Role
+): number[] => {
+    const added: number[] = [];
+    for (let i = 0, k = 0; i < teams.length / 2; i++, k += 2) {
+        const pair = pairs[i];
+        const { player1Index, player2Index } = pair;
+        const player1 = players[player1Index];
+        const player2 = players[player2Index];
+        const team1 = teams[k];
+        const team2 = teams[k + 1];
+        addPlayerToTeam(team1, player1, role)
+        addPlayerToTeam(team2, player2, role);
+        added.push(player1Index, player2Index);
+    }
+    return added;
+};
+
+const initTeam = (): ITeamInfo => ({
+    tank: [],
+    damage: [],
+    support: [],
+    score: 0
+});
+
+const initTeams = (teamCount: number): ITeamInfo[] =>
+    Array.from({ length: teamCount }).map(initTeam);
+
+const isValidRoleCount = (
+    role: Role,
+    teamsCount: number,
+    counts: ITeamCounts,
+) => counts[role] >= TEAM_ROLES_COUNT[role] * teamsCount;
+
+export const validateInput = (
+    input: IPlayer[],
+    teamsCount: number,
+    initCounts = getRolesCounts(input),
+): boolean => {
+    const isValidTeamsSize = input.length >= TEAM_PLAYERS_COUNT * teamsCount;
+    return (
+        teamsCount % 2 === 0 &&
+        isValidTeamsSize &&
+        isValidRoleCount(Role.Tank, teamsCount, initCounts) &&
+        isValidRoleCount(Role.Support, teamsCount, initCounts) &&
+        isValidRoleCount(Role.Damage, teamsCount, initCounts)
+    );
+};
+
+export const balanceByPair = (
+    input: IPlayer[],
+    teamsCount = 2
+): ITeamInfo[] | undefined => {
+    const isValid = validateInput(input, teamsCount);
+    if (!isValid) return;
+    const players = [...input];
+    const ignoredRoles: Role[] = [];
+    const teams = initTeams(teamsCount);
+    const minPairsCount = teamsCount / 2;
+    for (const role of Object.values(Role)) {
+        ignoredRoles.push(role);
+        for (let i = 0; i < TEAM_ROLES_COUNT[role]; i++) {
+            const counts = getRolesCounts(players);
+            const pairs = getClosestPairs(players, counts, ignoredRoles, role);
+            if (pairs.length < minPairsCount) return;
+            const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap)
+            const added = addToTeams(players, teams, sorted, role);
+            added.forEach((index) => players.splice(index, 1));
+        }
+    }
     return teams;
 };
-
-export default balanceByPair;

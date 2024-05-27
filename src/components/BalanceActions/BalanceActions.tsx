@@ -4,7 +4,7 @@ import './BalanceActions.css';
 import { IBalanceActionsProps, ITeamInfo } from '@/types';
 import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
 import ClassicButton from '../ui/ClassicButton/ClassicButton';
-import balanceByPair from '@/scripts/balanceByPair';
+import { balanceByPair } from '@/scripts/balanceByPair';
 import { useDispatch } from 'react-redux';
 
 const BalanceActions = ({ players }: IBalanceActionsProps) => {
