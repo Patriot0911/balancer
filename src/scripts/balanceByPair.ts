@@ -20,26 +20,33 @@ const getRolesCount = (players: IPlayer[], role: Role) =>
     players.filter((player) => player.roles[role]).length;
 
 const getRolesCounts = (players: IPlayer[]): ITeamCounts => ({
-    damage: getRolesCount(players, Role.Damage),
-    support: getRolesCount(players, Role.Support),
-    tank: getRolesCount(players, Role.Tank)
+    [Role.Damage]:      getRolesCount(players, Role.Damage),
+    [Role.Support]:     getRolesCount(players, Role.Support),
+    [Role.Tank]:        getRolesCount(players, Role.Tank)
 });
 
 const isAcceptablePlayer = (
     players: IPlayer[],
     counts: ITeamCounts,
-    ignoreRoles: Role[],
+    ignoredRoles: Role[],
     role: Role,
 ) => (roles: IPlayerRoles, topRoles?: IPlayerRoles): boolean => {
     if (!roles[role]) return false;
     for (const roleKey of Object.values(Role)) {
-        if (ignoreRoles.includes(roleKey) || !roles[roleKey]) continue;
+        if (ignoredRoles.includes(roleKey) || !roles[roleKey]) continue;
+        /*
+         * Загальна ідея була у валідації кількості гравців з різними ролями
+         * зважаючи на те, що наша валідація починається з танка - то ми використовуємо саме такий спосіб перевірки
+         * проте якби ми починали не з танка - то цей шматок коду не давав би занадто багато
+         * To Rework  |
+         *           \/
+        */
         if (role === Role.Tank) {
             const supportAndDamageCount = players.filter((player) =>
-                player.roles.support && player.roles.damage
+                player.roles[Role.Support] && player.roles[Role.Damage]
             ).length;
-            const supportsLack = supportAndDamageCount - counts.support < TEAM_ROLES_COUNT.support
-            const damagersLack = supportAndDamageCount - counts.damage < TEAM_ROLES_COUNT.damage
+            const supportsLack = supportAndDamageCount - counts[Role.Support] < TEAM_ROLES_COUNT[Role.Support]
+            const damagersLack = supportAndDamageCount - counts[Role.Damage] < TEAM_ROLES_COUNT[Role.Damage]
             if (supportsLack || damagersLack) return false;
         }
         const roleQuota = topRoles && topRoles[roleKey] ? 2 : 1;
@@ -59,14 +66,14 @@ const initPair = (player1Index: number): IPairInfo => ({
 export const pairPlayers = (
     players: IPlayer[],
     counts: ITeamCounts,
-    ignoreRoles: Role[],
+    ignoredRoles: Role[],
     role: Role,
 ): IPairInfo[] => {
     const pairs: IPairInfo[] = [];
     const isValid = isAcceptablePlayer(
         players,
         counts,
-        ignoreRoles,
+        ignoredRoles,
         role,
     );
     for (let player1Index = 0; player1Index < players.length; player1Index++) {
@@ -112,7 +119,7 @@ export const getClosestPairs = (
 const addPlayerToTeam = (team: ITeamInfo, player: IPlayer, role: Role): void => {
     const rolePlayers = team[role];
     rolePlayers.push(player);
-    const { rankValue } = player.roles[role]!
+    const { rankValue } = player.roles[role]!;
     team.score += rankValue;
 };
 
@@ -150,17 +157,26 @@ const initTeam = (): ITeamInfo => ({
 const initTeams = (teamCount: number): ITeamInfo[] =>
     Array.from({ length: teamCount }).map(initTeam);
 
+const isValidRoleCount = (
+    role: Role,
+    teamsCount: number,
+    counts: ITeamCounts,
+) => counts[role] >= TEAM_ROLES_COUNT[role] * teamsCount;
+
 export const validateInput = (
     input: IPlayer[],
     teamsCount: number,
     initCounts = getRolesCounts(input),
-): boolean => (
-    teamsCount % 2 === 0 &&
-    input.length >= TEAM_PLAYERS_COUNT * teamsCount &&
-    initCounts.tank >= TEAM_ROLES_COUNT.tank * teamsCount &&
-    initCounts.support >= TEAM_ROLES_COUNT.support * teamsCount &&
-    initCounts.damage >= TEAM_ROLES_COUNT.damage * teamsCount
-);
+): boolean => {
+    const isValidTeamsSize = input.length >= TEAM_PLAYERS_COUNT * teamsCount;
+    return (
+        teamsCount % 2 === 0 &&
+        isValidTeamsSize &&
+        isValidRoleCount(Role.Tank, teamsCount, initCounts) &&
+        isValidRoleCount(Role.Support, teamsCount, initCounts) &&
+        isValidRoleCount(Role.Damage, teamsCount, initCounts)
+    );
+};
 
 export const balanceByPair = (
     input: IPlayer[],
