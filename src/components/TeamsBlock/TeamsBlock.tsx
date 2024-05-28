@@ -9,7 +9,16 @@ const TeamsBlock = () => {
         <div
             className={'teams-block'}
         >
-            <Team
+            {
+                teamPlayers.map((team) => (
+                    <Team
+                        name={`Team ${team.tank[0].name}`}
+                        teamInfo={team}
+                        key={`Team ${team.tank[0].name}`}
+                    />
+                ))
+            }
+            {/* <Team
                 name={'Team A'}
                 teamInfo={teamPlayers[0]}
                 key={'Team A'}
@@ -19,7 +28,7 @@ const TeamsBlock = () => {
                 name={'Team B'}
                 teamInfo={teamPlayers[1]}
                 key={'Team B'}
-            />
+            /> */}
         </div>
     );
 };
