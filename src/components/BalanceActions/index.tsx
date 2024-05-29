@@ -2,7 +2,7 @@
 
 import { IBalanceActionsProps, IPlayer, ITeamInfo } from '@/types';
 import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
-import ClassicButton from '../ui/ClassicButton/ClassicButton';
+import ClassicButton from '../ui/ClassicButton';
 import { balanceByPair } from '@/scripts/balanceByPair';
 import { useDispatch } from 'react-redux';
 
@@ -24,7 +24,7 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
     }
 
     const balanceHandle = () => {
-        const teams = balanceByPair(players, Math.floor(players.length / 5));
+        const teams = balanceByPair(players, 2/*Math.floor(players.length / 5)*/);
         console.log(teams);
         if (!teams)
             return console.log('Something went wrong with team generations');

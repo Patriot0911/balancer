@@ -2,9 +2,9 @@
 
 import './AllPlayers.css';
 import { useAppSelector } from '@/redux/store';
-import StorageButtons from '../StorageButtons/StorageButtons';
+import StorageButtons from '../StorageButtons';
 import PlayersList from './PlayersList';
-import BalanceActions from '../BalanceActions/BalanceActions';
+import BalanceActions from '../BalanceActions';
 
 const AllPlayers = () => {
     const players = useAppSelector(state => state.allPlayersReducer.value);

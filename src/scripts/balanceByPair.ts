@@ -4,6 +4,7 @@ import {
     IPlayerRoles,
     ITeamCounts,
     ITeamInfo,
+    ITeamPairInfo,
     Role,
 } from "@/types";
 
@@ -199,7 +200,6 @@ export const balanceByPair = (
     const teams = initTeams(teamsCount);
     const minPairsCount = teamsCount / 2;
     for (const role of Object.values(Role)) {
-        console.log(role);
         ignoredRoles.push(role);
         for (let i = 0; i < TEAM_ROLES_COUNT[role] * minPairsCount; i++) {
             const counts = getRolesCounts(players);
