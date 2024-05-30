@@ -1,41 +1,53 @@
 "use client";
+
 import './TeamsBlock.css';
-import Team from '../Team';
-import { useAppSelector } from '@/redux/store';
+import Team from '@/components/Team';
 import { ITeamPairInfo } from '@/types';
+import { useAppSelector } from '@/redux/store';
+import { Fragment, useEffect, useState } from 'react';
 
 const TeamsBlock = () => {
   const teams = useAppSelector(item => item.teamsReducer.value);
-  const teamPairs: ITeamPairInfo[] = [];
+  const [teamPairs, setTeamPairs] = useState<ITeamPairInfo[]>([]);
 
-  for (let i = 0; i < teams.length; i += 2) {
-    if (i + 1 < teams.length) {
-      teamPairs.push({
-        teamA: teams[i],
-        teamB: teams[i + 1],
-      });
-    }
-  }
+  useEffect(
+    () => {
+      const newPairs: ITeamPairInfo[] = [];
+      for (let i = 0; i < Math.floor(teams.length/2); ++i) {
+        const pairIndex = i*2;
+        if(!teams[pairIndex] || !teams[pairIndex+1])
+          break;
+        newPairs.push({
+          teamA: teams[pairIndex],
+          teamB: teams[pairIndex + 1],
+        });
+      };
+      setTeamPairs(newPairs);
+    },
+  [teams]);
+
   return (
     <div
       className={'teams-block'}
     >
       {
-        teamPairs.map((team) => (
-          <>
+        teamPairs.map(({ teamA, teamB }, teamIndex) =>
+          <Fragment
+            key={`teams-group-${teamIndex}`}
+          >
             <Team
-              name={`Team ${team.teamA.tank[0].name}`}
-              teamInfo={team.teamA}
-              key={`Team ${team.teamA.tank[0].name}`}
+              name={'Team A'}
+              teamInfo={teamA}
+              key={`team-a-group-${teamIndex}`}
             />
             <h3>VS</h3>
             <Team
-              name={`Team ${team.teamB.tank[0].name}`}
-              teamInfo={team.teamB}
-              key={`Team ${team.teamB.tank[0].name}`}
+              name={`Team B`}
+              teamInfo={teamB}
+              key={`team-b-group-${teamIndex}`}
             />
-          </>
-        ))
+          </Fragment>
+        )
       }
     </div>
   );
