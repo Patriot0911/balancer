@@ -64,6 +64,7 @@ const initPair = (player1Index: number): IPairInfo => ({
     player2Index: -1
 });
 
+
 export const pairPlayers = (
     players: IPlayer[],
     counts: ITeamCounts,
@@ -90,8 +91,7 @@ export const pairPlayers = (
             const player2Rank = player2.roles[role]!.rankValue;
             const gap = Math.abs(player1Rank - player2Rank);
             if (
-                pair.gap > gap //||
-                //(pair.gap === gap && !usedPlayerIndexes.includes(player2Index))
+                pair.gap > gap
             ) Object.assign(pair, { gap, player2Index });
         }
         if (pair.player2Index !== -1) {
@@ -109,7 +109,6 @@ export const getClosestPairs = (
     role: Role,
 ): IPairInfo[] => {
     const pairs = pairPlayers(players, counts, ignoredRoles, role);
-    console.log(pairs);
     const unique = pairs.filter((pair, pairIndex) => {
         const transcendent = pairs.find((item, index) =>
             (item.player1Index === pair.player2Index)
@@ -117,7 +116,6 @@ export const getClosestPairs = (
         );
         return pair.player1Index !== transcendent?.player2Index
     });
-    console.log(unique);
     const res = unique.filter((pair) => {
         const snakePair = unique.find((item) =>
             pair.player1Index === item.player2Index
@@ -198,17 +196,30 @@ export const balanceByPair = (
     const players = [...input];
     const ignoredRoles: Role[] = [];
     const teams = initTeams(teamsCount);
-    const minPairsCount = teamsCount / 2;
+    const teamPairsCount = teamsCount / 2;
     for (const role of Object.values(Role)) {
         ignoredRoles.push(role);
-        for (let i = 0; i < TEAM_ROLES_COUNT[role] * minPairsCount; i++) {
+        const testFunc = () => {
             const counts = getRolesCounts(players);
             const pairs = getClosestPairs(players, counts, ignoredRoles, role);
-            if (pairs.length < minPairsCount) return;
+            if (pairs.length < teamPairsCount) return;
             const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap)
             const added = addToTeams(players, teams, sorted, role);
             added.forEach((index) => players.splice(index, 1));
-        }
+            return added;
+        };
+        for (
+            let addedCount = 0; addedCount/TEAM_ROLES_COUNT[role] < TEAM_ROLES_COUNT[role]*teamPairsCount*2;
+        ) {
+            const addRes = testFunc();
+            if(!addRes) {
+                if(addedCount/TEAM_ROLES_COUNT[role] < 2) {
+                    throw Error(`Not enough ${role} players`);
+                };
+                break;
+            };
+            addedCount += addRes.length;
+        };
     }
     return teams;
 };

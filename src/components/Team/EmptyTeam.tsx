@@ -5,7 +5,7 @@ const EmptyTeam = () => {
         <>
             {
                 [...new Array(5)].map(
-                (item, index) =>
+                (_, index) =>
                     <TeamPlayer
                         roleId={Math.round(index/2)}
                         key={index}

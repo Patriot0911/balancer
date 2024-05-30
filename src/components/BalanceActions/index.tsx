@@ -17,10 +17,11 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
         if (teamsNumber < 2) {
             return setError("Not enough players to form teams");
         }
-        const teams = balanceByPair(players, 2/*Math.floor(players.length / 5)*/);
+        const teams = balanceByPair(players, /*Math.floor(players.length / 5)*/ 2);
         if (!teams) {
             return setError("Something went wrong with team formation");
-        }
+        };
+        setError('');
         dispatch(clearAllTeams());
         for (const team of teams) {
             dispatch(addTeam(team));

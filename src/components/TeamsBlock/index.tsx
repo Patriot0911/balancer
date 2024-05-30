@@ -3,8 +3,8 @@
 import './TeamsBlock.css';
 import Team from '@/components/Team';
 import { ITeamPairInfo } from '@/types';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/redux/store';
-import { Fragment, useEffect, useState } from 'react';
 
 const TeamsBlock = () => {
   const teams = useAppSelector(item => item.teamsReducer.value);
@@ -12,6 +12,7 @@ const TeamsBlock = () => {
 
   useEffect(
     () => {
+      console.log(teams);
       const newPairs: ITeamPairInfo[] = [];
       for (let i = 0; i < Math.floor(teams.length/2); ++i) {
         const pairIndex = i*2;
@@ -23,8 +24,8 @@ const TeamsBlock = () => {
         });
       };
       setTeamPairs(newPairs);
-    },
-  [teams]);
+    }, [teams]
+  );
 
   return (
     <div
@@ -32,7 +33,8 @@ const TeamsBlock = () => {
     >
       {
         teamPairs.map(({ teamA, teamB }, teamIndex) =>
-          <Fragment
+          <div
+            className={'team-group'}
             key={`teams-group-${teamIndex}`}
           >
             <Team
@@ -46,7 +48,7 @@ const TeamsBlock = () => {
               teamInfo={teamB}
               key={`team-b-group-${teamIndex}`}
             />
-          </Fragment>
+          </div>
         )
       }
     </div>
