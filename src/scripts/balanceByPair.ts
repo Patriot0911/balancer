@@ -4,7 +4,6 @@ import {
     IPlayerRoles,
     ITeamCounts,
     ITeamInfo,
-    ITeamPairInfo,
     Role,
 } from "@/types";
 
@@ -187,6 +186,19 @@ export const validateInput = (
     );
 };
 
+const getPairsToTeams = (
+    players: IPlayer[],
+    ignoredRoles: Role[],
+    teamPairsCount: number,
+    role: Role
+): IPairInfo[] | undefined => {
+    const counts = getRolesCounts(players);
+    const pairs = getClosestPairs(players, counts, ignoredRoles, role);
+    if (pairs.length < teamPairsCount) return;
+    const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap);
+    return sorted;
+};
+
 export const balanceByPair = (
     input: IPlayer[],
     teamsCount = 2
@@ -199,26 +211,20 @@ export const balanceByPair = (
     const teamPairsCount = teamsCount / 2;
     for (const role of Object.values(Role)) {
         ignoredRoles.push(role);
-        const testFunc = () => {
-            const counts = getRolesCounts(players);
-            const pairs = getClosestPairs(players, counts, ignoredRoles, role);
-            if (pairs.length < teamPairsCount) return;
-            const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap)
-            const added = addToTeams(players, teams, sorted, role);
-            added.forEach((index) => players.splice(index, 1));
-            return added;
-        };
+        const neededPlayers = TEAM_ROLES_COUNT[role]*teamPairsCount*2;
         for (
-            let addedCount = 0; addedCount/TEAM_ROLES_COUNT[role] < TEAM_ROLES_COUNT[role]*teamPairsCount*2;
+            let addedCount = 0; addedCount/TEAM_ROLES_COUNT[role] < neededPlayers;
         ) {
-            const addRes = testFunc();
-            if(!addRes) {
-                if(addedCount/TEAM_ROLES_COUNT[role] < 2) {
+            const playersToAdd = getPairsToTeams(players, ignoredRoles, teamPairsCount, role);
+            if(!playersToAdd || playersToAdd.length < 0) {
+                if(addedCount/TEAM_ROLES_COUNT[role] < teamPairsCount) {
                     throw Error(`Not enough ${role} players`);
                 };
                 break;
             };
-            addedCount += addRes.length;
+            const addedPlayers = addToTeams(players, teams, playersToAdd, role);
+            addedPlayers.forEach((index) => players.splice(index, 1));
+            addedCount += addedPlayers.length;
         };
     }
     return teams;
