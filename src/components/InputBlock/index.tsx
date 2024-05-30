@@ -1,5 +1,5 @@
-import AllPlayers from '../AllPlayers/AllPlayers';
-import InputPlayer from '../InputPlayer/InputPlayer';
+import AllPlayers from '../AllPlayers';
+import InputPlayer from '../InputPlayer';
 import './InputBlock.css';
 
 const InputBlock = () => {

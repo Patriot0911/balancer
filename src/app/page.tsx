@@ -1,6 +1,6 @@
 import './page.css';
-import TeamsBlock from '@/components/TeamsBlock/TeamsBlock';
-import InputBlock from '@/components/InputBlock/InputBlock';
+import TeamsBlock from '@/components/TeamsBlock';
+import InputBlock from '@/components/InputBlock';
 
 
 const Home = () => {

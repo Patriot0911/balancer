@@ -77,6 +77,11 @@ export interface IRoleContainerProps {
     roleId: OverwatchRoles;
 };
 
+export interface ITeamPairInfo {
+    teamA: ITeamInfo;
+    teamB: ITeamInfo;
+}
+
 export interface ITeamInitialState {
     value: ITeamInfo[];
 }

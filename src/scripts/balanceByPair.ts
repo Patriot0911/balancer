@@ -20,9 +20,9 @@ const getRolesCount = (players: IPlayer[], role: Role) =>
     players.filter((player) => player.roles[role]).length;
 
 const getRolesCounts = (players: IPlayer[]): ITeamCounts => ({
-    [Role.Damage]:      getRolesCount(players, Role.Damage),
-    [Role.Support]:     getRolesCount(players, Role.Support),
-    [Role.Tank]:        getRolesCount(players, Role.Tank)
+    [Role.Damage]: getRolesCount(players, Role.Damage),
+    [Role.Support]: getRolesCount(players, Role.Support),
+    [Role.Tank]: getRolesCount(players, Role.Tank)
 });
 
 const isAcceptablePlayer = (
@@ -63,6 +63,7 @@ const initPair = (player1Index: number): IPairInfo => ({
     player2Index: -1
 });
 
+
 export const pairPlayers = (
     players: IPlayer[],
     counts: ITeamCounts,
@@ -77,6 +78,7 @@ export const pairPlayers = (
         role,
     );
     for (let player1Index = 0; player1Index < players.length; player1Index++) {
+        const usedPlayerIndexes: number[] = [];
         const player1 = players[player1Index];
         if (!isValid(player1.roles)) continue;
         const pair = initPair(player1Index);
@@ -87,9 +89,14 @@ export const pairPlayers = (
             if (!isValid(player2.roles, player1.roles)) continue;
             const player2Rank = player2.roles[role]!.rankValue;
             const gap = Math.abs(player1Rank - player2Rank);
-            if (pair.gap > gap) Object.assign(pair, { gap, player2Index });
+            if (
+                pair.gap > gap
+            ) Object.assign(pair, { gap, player2Index });
         }
-        if (pair.player2Index !== -1) pairs.push(pair);
+        if (pair.player2Index !== -1) {
+            pairs.push(pair);
+            usedPlayerIndexes.push(pair.player1Index, pair.player2Index);
+        }
     }
     return pairs;
 };
@@ -103,7 +110,8 @@ export const getClosestPairs = (
     const pairs = pairPlayers(players, counts, ignoredRoles, role);
     const unique = pairs.filter((pair, pairIndex) => {
         const transcendent = pairs.find((item, index) =>
-            item.player1Index === pair.player2Index && pairIndex < index
+            (item.player1Index === pair.player2Index)
+            && pairIndex < index
         );
         return pair.player1Index !== transcendent?.player2Index
     });
@@ -178,6 +186,19 @@ export const validateInput = (
     );
 };
 
+const getPairsToTeams = (
+    players: IPlayer[],
+    ignoredRoles: Role[],
+    teamPairsCount: number,
+    role: Role
+): IPairInfo[] | undefined => {
+    const counts = getRolesCounts(players);
+    const pairs = getClosestPairs(players, counts, ignoredRoles, role);
+    if (pairs.length < teamPairsCount) return;
+    const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap);
+    return sorted;
+};
+
 export const balanceByPair = (
     input: IPlayer[],
     teamsCount = 2
@@ -187,17 +208,24 @@ export const balanceByPair = (
     const players = [...input];
     const ignoredRoles: Role[] = [];
     const teams = initTeams(teamsCount);
-    const minPairsCount = teamsCount / 2;
+    const teamPairsCount = teamsCount / 2;
     for (const role of Object.values(Role)) {
         ignoredRoles.push(role);
-        for (let i = 0; i < TEAM_ROLES_COUNT[role]; i++) {
-            const counts = getRolesCounts(players);
-            const pairs = getClosestPairs(players, counts, ignoredRoles, role);
-            if (pairs.length < minPairsCount) return;
-            const sorted = pairs.sort((pairA, pairB) => pairA.gap - pairB.gap)
-            const added = addToTeams(players, teams, sorted, role);
-            added.forEach((index) => players.splice(index, 1));
-        }
+        const neededPlayers = TEAM_ROLES_COUNT[role]*teamPairsCount*2;
+        for (
+            let addedCount = 0; addedCount/TEAM_ROLES_COUNT[role] < neededPlayers;
+        ) {
+            const playersToAdd = getPairsToTeams(players, ignoredRoles, teamPairsCount, role);
+            if(!playersToAdd || playersToAdd.length < 0) {
+                if(addedCount/TEAM_ROLES_COUNT[role] < teamPairsCount) {
+                    throw Error(`Not enough ${role} players`);
+                };
+                break;
+            };
+            const addedPlayers = addToTeams(players, teams, playersToAdd, role);
+            addedPlayers.forEach((index) => players.splice(index, 1));
+            addedCount += addedPlayers.length;
+        };
     }
     return teams;
 };
