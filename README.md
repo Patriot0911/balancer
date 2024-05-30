@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Overwatch Balancer Website
+## Description
+The Overwatch Balancer Website is a web application designed to help users create balanced teams for the game Overwatch. Users can manually add players with corresponding ranks in tank, damage, and support roles. The website then uses the "balance by pair" algorithm to form two balanced teams. The application is built using Next.js and is fully functional on both PCs and smartphones, supporting all major web browsers.
+
+## Features
+Add Players: Users can add players with specific roles (tank, damage, support) and ranks.
+Balance Teams: Automatically form two balanced teams using the "balance by pair" algorithm.
+Local Storage: Save player presets to the browser's local storage and load them later.
+No Authorization Required: The website does not require user login or authentication.
 
 ## Getting Started
+Prerequisites
 
-First, run the development server:
+Ensure you have the following installed on your machine:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Node.js (v12.x or later)
+npm (v6.x or later)
+
+## Installation
+Clone the repository:
 ```
+git clone https://github.com/yourusername/overwatch-balancer.git
+cd overwatch-balancer
+```
+Install the dependencies:
+```
+npm install
+```
+Running the Application
+Start the development server:
+```
+npm run dev
+```
+Open your browser and navigate to http://localhost:3000 to access the application.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Usage
+Add Players:
+Navigate to the "Add Player" section.
+Enter the player's name, select their roles (tank, damage, support), and specify their ranks.
+Click "Add" to add the player to the list.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Balance Teams:
+After adding the players, click the "Balance by pair" button.
+The application will use the "balance by pair" algorithm to form two balanced teams and display the results.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Save Presets:
+Click the "Save" button to save the current list of players to the browser's local storage.
 
-## Learn More
+Load Presets:
+Click the "Load" button to load previously saved player presets from the local storage.
 
-To learn more about Next.js, take a look at the following resources:
+## Design document
+[Link to design document](https://docs.google.com/document/d/18dBekn1yftHZqIz4o7t1zI1zkKmuvQFpK3UVtZa-l2E/edit?usp=sharing)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Screenshot
+![image](https://github.com/Patriot0911/balancer/assets/135731067/b7991ed9-953a-41f8-bcf6-ab18831c87b4)
