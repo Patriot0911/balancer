@@ -1,15 +1,35 @@
 import './Player.css';
 import { IPlayer } from '@/types';
 import PlayerRolesContainer from './PlayerRolesContainer';
+import ActionLayer from './ActionLayer';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { removePlayer } from '@/redux/features/all-players-slice';
 
-const Player = (props: IPlayer) => {
+const Player = ({ name, roles }: IPlayer) => {
+    const [isInEdit, setInEdit] = useState(false);
+    const dispatch = useDispatch();
+
+    const changeEditHandle = () => setInEdit(!isInEdit);
+
+    const deleteHandle = () => {
+        dispatch(removePlayer({
+            name,
+        }));
+    };
+
     return (
         <div
             className={'player-container'}
         >
-            <h2>{props.name}</h2>
+            <h2>{name}</h2>
+            <ActionLayer
+                editingCallback={changeEditHandle}
+                deleteCallback={deleteHandle}
+            />
             <PlayerRolesContainer
-                {...props}
+                isInEdit={isInEdit}
+                roles={roles}
             />
         </div>
     );
