@@ -3,20 +3,27 @@ import { getRank } from "@/scripts/ranks";
 import { IPlayer } from "@/types";
 import { useState, useRef, FormEvent } from "react";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/redux/store";
 
 import PlayerFormButtons from "./PlayerFormButtons";
 
 import InputField from "../ui/InputField";
 import ErrorAlert from "../ui/ErrorInfo";
 
+
 const InputPlayerForm = () => {
     const [error, setError] = useState<string | null>();
     const dispatch = useDispatch();
+    const players = useAppSelector(state => state.allPlayersReducer.value);
 
     const nickRef = useRef<HTMLInputElement>(null);
     const tankRef = useRef<HTMLInputElement>(null);
     const damageRef = useRef<HTMLInputElement>(null);
     const supportRef = useRef<HTMLInputElement>(null);
+
+    const isValidNickName = (nick: string): boolean => {
+        return !players.some(player => player.name === nick);
+    }
 
     const submitHandle = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -24,8 +31,10 @@ const InputPlayerForm = () => {
         const tankRank = getRank(tankRef.current?.value);
         const damageRank = getRank(damageRef.current?.value);
         const supporRank = getRank(supportRef.current?.value);
-        if (!nickName)
-            return setError('Something went wrong with nickname value');
+        if (!nickName || nickName.trim().length === 0)
+            return setError('Nickname can not be empty');
+        if (!isValidNickName(nickName))
+            return setError('Such nickname is already used');
         if (!tankRank && !damageRank && !supporRank)
             return setError('At least one role must be provided');
         if (error)
