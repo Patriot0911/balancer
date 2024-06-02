@@ -23,7 +23,7 @@ const InputPlayerForm = () => {
 
     const isValidNickName = (nick: string): boolean => {
         return !players.some(player => player.name === nick);
-    }
+    };
 
     const submitHandle = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -33,19 +33,20 @@ const InputPlayerForm = () => {
         const supporRank = getRank(supportRef.current?.value);
         if (!nickName || nickName.trim().length === 0)
             return setError('Nickname can not be empty');
-        if (!isValidNickName(nickName))
+        const trimmedNickName = nickName.trimStart().trimEnd();
+        if (!isValidNickName(trimmedNickName))
             return setError('Such nickname is already used');
         if (!tankRank && !damageRank && !supporRank)
-            return setError('At least one role must be provided');
+            return setError('Roles list can not be empty');
         if (error)
             setError(null);
         const player: IPlayer = {
-            name: nickName,
+            name: trimmedNickName,
             roles: {
                 tank: tankRank,
                 damage: damageRank,
-                support: supporRank
-            }
+                support: supporRank,
+            },
         };
         dispatch(addPlayer(player));
         setTimeout(() => {
@@ -54,7 +55,7 @@ const InputPlayerForm = () => {
                 scrollDiv.scrollIntoView({
                     behavior: "smooth"
                 });
-        }, 0.1);
+        });
     };
 
     return (
