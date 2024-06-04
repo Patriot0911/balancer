@@ -27,6 +27,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 5px;
 }
 .rank-box img {
     width: 15px;
@@ -56,9 +57,11 @@
     align-items: flex-start;
     justify-content: flex-end;
     opacity: 0;
+    pointer-events: none;
 }
 .action-layer button {
     outline: none;
+    pointer-events: all;
     border: none;
     opacity: 0.8;
     border-radius: 2px;
@@ -72,4 +75,15 @@
 .player-container:hover .action-layer {
     visibility: visible;
     opacity: 1;
+}
+
+.player-roles-container .player-role-input-change {
+    border: 0;
+    width: 50px;
+    background-color: rgba(240, 248, 255, 0.76);
+    border-radius: 5px;
+}
+.player-nickname-input-change {
+    width: 125px;
+    margin-left: 5px;
 }

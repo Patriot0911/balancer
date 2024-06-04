@@ -9,6 +9,11 @@ interface IRemovePlayer {
     name: string;
 };
 
+interface IPlayerUpdate {
+    name: string;
+    player: IPlayer;
+};
+
 export const allPlayers = createSlice({
     name: 'allPlayers',
     initialState,
@@ -19,6 +24,17 @@ export const allPlayers = createSlice({
                 value: [
                     ...state.value,
                     action.payload,
+                ],
+            };
+        },
+        replacePlayer: (state, action: PayloadAction<IPlayerUpdate>) => {
+            const valueWithoutTarget = state.value.filter(
+                (player) => player.name !== action.payload.name
+            );
+            return {
+                value: [
+                    ...valueWithoutTarget,
+                    action.payload.player,
                 ],
             };
         },
@@ -39,6 +55,7 @@ export const {
     clearAllPlayers,
     addPlayer,
     removePlayer,
+    replacePlayer,
 } = allPlayers.actions;
 
 export default allPlayers.reducer;
