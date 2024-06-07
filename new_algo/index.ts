@@ -1,9 +1,25 @@
-import { IPlayer, IPlayerRoles, Role } from "@/types";
+import { IPlayer, Role } from "@/types";
 
+interface IPairInfo {
+    player1: IPlayer;
+    player2?: IPlayer;
+    gap: number;
+};
 interface ITeamRolesCount {
     [Role.Damage]:      number;
     [Role.Support]:     number;
     [Role.Tank]:        number;
+};
+interface ITeamInfo {
+    [Role.Tank]: IPlayer[];
+    [Role.Damage]: IPlayer[];
+    [Role.Support]: IPlayer[];
+    score: number;
+};
+interface IRoleQuotaInfo {
+    [Role.Damage]: number;
+    [Role.Support]: number;
+    [Role.Tank]: number;
 };
 
 const defaultRolesCount: ITeamRolesCount = {
@@ -31,12 +47,6 @@ const isValidInit = (players: IPlayer[], rolesCount: ITeamRolesCount, teamCount:
             throw new Error(`No enough players for '${key}'`);
     };
     return true;
-};
-
-interface IRoleQuotaInfo {
-    [Role.Damage]: number;
-    [Role.Support]: number;
-    [Role.Tank]: number;
 };
 
 const isValidPlayersSet = (players: IPlayer[], roleQuota: IRoleQuotaInfo, ignoredRoles: Role[]) => {
@@ -68,12 +78,6 @@ const isValidPlayersSet = (players: IPlayer[], roleQuota: IRoleQuotaInfo, ignore
     return true;
 };
 
-interface IPairInfo {
-    player1: IPlayer;
-    player2?: IPlayer;
-    gap: number;
-};
-
 const initPair = (player1: IPlayer): IPairInfo => {
     return {
         player1,
@@ -87,12 +91,12 @@ const getGap = (player1: IPlayer, player2: IPlayer, role: Role) => {
     return Math.abs(player1.roles[role]!.rankValue - player2.roles[role]!.rankValue);
 };
 
-interface ITeamInfo {
-    [Role.Tank]: IPlayer[];
-    [Role.Damage]: IPlayer[];
-    [Role.Support]: IPlayer[];
-    score: number;
-};
+const initTeamState = (rolesCount: ITeamRolesCount) => ({
+    [Role.Tank]: new Array(rolesCount[Role.Tank]),
+    [Role.Damage]: new Array(rolesCount[Role.Damage]),
+    [Role.Support]: new Array(rolesCount[Role.Support]),
+    score: 0,
+});
 
 const balanceInit = (
     inputPlayers: IPlayer[],
@@ -106,15 +110,11 @@ const balanceInit = (
     const ignoredRoles: Role[] = rolesKeys.filter(
         key => (!rolesCount[key as Role] || rolesCount[key as Role] <= 0)
     );
-    const resTeamsList: ITeamInfo[] = new Array(teamCount).fill({
-        [Role.Damage]: new Array(rolesCount[Role.Damage]),
-        [Role.Support]: new Array(rolesCount[Role.Support]),
-        [Role.Tank]: new Array(rolesCount[Role.Tank]),
-        score: 0,
-    });
-    console.log(resTeamsList);
+    const resTeamsList: ITeamInfo[] = [];
+    for(let i = 0; i < teamCount; i++) {
+        resTeamsList.push(initTeamState(rolesCount));
+    };
     for(const role of rolesKeys) {
-        console.log(role);
         if(ignoredRoles.includes(role)) continue;
         const roleQuota = rolesCount[role] * teamCount;
         for(let added = 0; added < roleQuota;) {
@@ -176,29 +176,32 @@ const balanceInit = (
             const sortedPairs = pairsList.sort(
                 (pairA, pairB) => pairA.gap - pairB.gap
             );
-            const firstPair = sortedPairs[0];
+            const selectedPair = sortedPairs[0];
             players = players.filter(
-                i => i.name !== firstPair.player1.name && i.name !== firstPair.player2?.name
+                i => i.name !== selectedPair.player1.name && i.name !== selectedPair.player2?.name
             );
             added += 2;
-            console.log(firstPair);
-            if(resTeamsList[0].score > resTeamsList[1].score) {
-                resTeamsList[1][role].push(firstPair.player1);
-                resTeamsList[0][role].push(firstPair.player2 as IPlayer);
 
-
-                resTeamsList[1].score += firstPair.player1.roles[role]!.rankValue;
-                resTeamsList[0].score += firstPair.player2!.roles[role]!.rankValue;
-            } else {
-                resTeamsList[0][role].push(firstPair.player1);
-                resTeamsList[1][role].push(firstPair.player2 as IPlayer);
-
-                resTeamsList[0].score += firstPair.player1.roles[role]!.rankValue;
-                resTeamsList[1].score += firstPair.player2!.roles[role]!.rankValue;
-            };
+            /*
+                Adding players to teams
+            */
+            const sortedPairPlayers = [
+                selectedPair.player1,
+                selectedPair.player2
+            ].sort(
+                (playerA, playerB) => playerA!.roles[role]!.rankValue - playerB!.roles[role]!.rankValue
+            );
+            const firstTeamIndex = resTeamsList[0].score < resTeamsList[1].score ? 0 : 1;
+            const secondTeamIndex = firstTeamIndex === 0 ? 1 : 0;
+ 
+            resTeamsList[firstTeamIndex][role].push(sortedPairPlayers[1] as IPlayer);
+            resTeamsList[secondTeamIndex][role].push(sortedPairPlayers[0] as IPlayer);
+            resTeamsList[firstTeamIndex].score += (sortedPairPlayers[1] as IPlayer).roles[role]!.rankValue;
+            resTeamsList[secondTeamIndex].score += (sortedPairPlayers[0] as IPlayer).roles[role]!.rankValue;
         };
         ignoredRoles.push(role);
     };
+    console.log(resTeamsList);
     return resTeamsList;
 };
 
