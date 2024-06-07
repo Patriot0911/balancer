@@ -7,6 +7,7 @@ import ErrorAlert from "../ui/ErrorInfo";
 import { balanceByPair } from '@/scripts/balanceByPair';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import balanceInit from '../../../new_algo';
 
 const BalanceActions = ({ players }: IBalanceActionsProps) => {
     const [error, setError] = useState<string | null>();
@@ -17,7 +18,8 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
         if (teamsNumber < 2) {
             return setError("Not enough players to form teams");
         }
-        const teams = balanceByPair(players, /*Math.floor(players.length / 5)*/ 2);
+        // const teams = balanceByPair(players, /*Math.floor(players.length / 5)*/ 2);
+        const teams = balanceInit(players, 2);
         if (!teams) {
             return setError("Something went wrong with team formation");
         };
