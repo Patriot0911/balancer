@@ -193,7 +193,7 @@ const balanceInit = (
             );
             const firstTeamIndex = resTeamsList[0].score < resTeamsList[1].score ? 0 : 1;
             const secondTeamIndex = firstTeamIndex === 0 ? 1 : 0;
- 
+
             resTeamsList[firstTeamIndex][role].push(sortedPairPlayers[1] as IPlayer);
             resTeamsList[secondTeamIndex][role].push(sortedPairPlayers[0] as IPlayer);
             resTeamsList[firstTeamIndex].score += (sortedPairPlayers[1] as IPlayer).roles[role]!.rankValue;
@@ -201,7 +201,6 @@ const balanceInit = (
         };
         ignoredRoles.push(role);
     };
-    console.log(resTeamsList);
     return resTeamsList;
 };
 

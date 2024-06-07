@@ -1,11 +1,10 @@
 "use client";
 
 import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
-import { balanceByPair } from '@/scripts/balanceByPair';
 import ErrorAlert from "@/components/ui/ErrorInfo";
 import ClassicButton from '../ui/ClassicButton';
 import { IBalanceActionsProps } from '@/types';
-import balanceInit from '../../../new_algo';
+import balancer from '@/scripts/newBalancer';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 
@@ -19,7 +18,7 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
             return setError("Not enough players to form teams");
         };
         try {
-            const teams = balanceInit(players, teamsNumber);
+            const teams = balancer(players, teamsNumber);
             if(!teams)
                 return setError('Something went wrong with team formation');
             setError('');
