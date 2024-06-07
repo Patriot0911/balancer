@@ -1,13 +1,13 @@
 import { addPlayer } from "@/redux/features/all-players-slice";
+import { useState, useRef, FormEvent } from "react";
+import { useAppSelector } from "@/redux/store";
+import { useDispatch } from "react-redux";
 import { getRank } from "@/scripts/ranks";
 import { IPlayer } from "@/types";
-import { useState, useRef, FormEvent } from "react";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "@/redux/store";
 
 import PlayerFormButtons from "./PlayerFormButtons";
-import InputField from "../ui/InputField";
-import ErrorAlert from "../ui/ErrorInfo";
+import InputField from "@/components/ui/InputField";
+import ErrorAlert from "@/components/ui/ErrorInfo";
 
 const InputPlayerForm = () => {
     const [error, setError] = useState<string | null>(null);
@@ -23,39 +23,65 @@ const InputPlayerForm = () => {
         return !players.some(player => player.name === nick);
     };
 
-    const isPositiveNumber = (value: any): boolean => {
-        return !isNaN(value) && Number(value) > 0;
+    const isValidRankInput = (rankData?: string) =>
+        (!rankData || isNaN(parseInt(rankData as string))) ||parseInt(rankData) >= 0;
+
+    const getRanks = () => {
+        try {
+            if(
+                !isValidRankInput(tankRef.current?.value) ||
+                !isValidRankInput(damageRef.current?.value) ||
+                !isValidRankInput(supportRef.current?.value)
+            ) {
+                setError('Invalid rank provided');
+                return {
+                    state: false,
+                };
+            };
+            const tankRank = getRank(tankRef.current?.value);
+            const damageRank = getRank(damageRef.current?.value);
+            const supportRank = getRank(supportRef.current?.value);
+            return {
+                state: true,
+                tankRank,
+                damageRank,
+                supportRank,
+            };
+        } catch (e: any) {
+            setError(e.message);
+        };
+        return {
+            state: false,
+        };
     };
 
     const submitHandle = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const nickName = nickRef.current?.value;
-        const tankRank = getRank(tankRef.current?.value);
-        const damageRank = getRank(damageRef.current?.value);
-        const supportRank = getRank(supportRef.current?.value);
+        const ranks = getRanks();
+        if(!ranks || !ranks.state)
+            return;
+        const {
+            damageRank,
+            supportRank,
+            tankRank,
+        } = ranks;
 
         if (!nickName || nickName.trim().length === 0) {
             return setError('Nickname cannot be empty');
-        }
+        };
 
         const trimmedNickName = nickName.trim();
         if (!isValidNickName(trimmedNickName)) {
             return setError('Such nickname is already used');
-        }
+        };
 
         if (!tankRank && !damageRank && !supportRank) {
             return setError('Roles list cannot be empty');
-        }
+        };
 
-        if ((tankRank && !isPositiveNumber(tankRank.rankValue)) ||
-            (damageRank && !isPositiveNumber(damageRank.rankValue)) ||
-            (supportRank && !isPositiveNumber(supportRank.rankValue))) {
-            return setError('Ranks must be positive numbers');
-        }
-
-        if (error) {
+        if (error)
             setError(null);
-        }
 
         const player: IPlayer = {
             name: trimmedNickName,
@@ -85,7 +111,13 @@ const InputPlayerForm = () => {
                 name={'nickName'}
                 ref={nickRef}
             />
-            {error ? <ErrorAlert text={error} /> : <br />}
+            <div
+                className={'error-container'}
+            >
+                {
+                    error && <ErrorAlert text={error} />
+                }
+            </div>
             <section className={'roles-input-container'}>
                 <InputField label={'Tank'} name={'tankRank'} ref={tankRef} />
                 <InputField label={'Damage'} name={'damageRank'} ref={damageRef} />

@@ -48,13 +48,13 @@ export const getRank = (rawString?: string): IProdRankData | undefined => {
     }
     const rankData = getPossibleRankData(editedString);
     if(!rankData)
-        return;
+        throw new Error('Cannot find such division (try br / silver / gm etc)');
     const { value, str } = rankData;
     if(value < 1 || value > 5)
-        return;
+        throw new Error('Cannot find such division tier (should be [1;5])');
     const rank = ranks.find((item) => item.replaces.includes(str))
     if(!rank)
-        return;
+        throw new Error('Cannot find such rank (try br 3 / silver 5 / gm 2 etc)');
     const rankName = rank.name.concat(' ', value.toFixed());
     const rankValue = rank.begin + rank.step * (5-value);
     return {
