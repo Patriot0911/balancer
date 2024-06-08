@@ -1,9 +1,9 @@
 "use client";
 
 import './AllPlayers.css';
+import PlayersList from './PlayersList';
 import { useAppSelector } from '@/redux/store';
 import StorageButtons from '../StorageButtons';
-import PlayersList from './PlayersList';
 import BalanceActions from '../BalanceActions';
 
 const AllPlayers = () => {
