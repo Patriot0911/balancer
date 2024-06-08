@@ -1,6 +1,6 @@
 import './Team.css';
-import { ITeamProps } from '@/types';
 import EmptyTeam from './EmptyTeam';
+import { ITeamProps } from '@/types';
 import TeamPlayerList from './TeamPlayerList';
 
 const Team = ({ teamInfo, name }: ITeamProps) => {
@@ -9,7 +9,7 @@ const Team = ({ teamInfo, name }: ITeamProps) => {
       className={'team-info'}
     >
       {
-        teamInfo && <h1>{name} [{teamInfo.score}]</h1>
+        name && <h1>{name} [{teamInfo ? teamInfo.score : 0}]</h1>
       }
       <div
         className={'team-players'}

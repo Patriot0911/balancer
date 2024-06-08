@@ -1,10 +1,11 @@
 "use client";
 
 import './TeamsBlock.css';
-import Team from '@/components/Team';
 import { ITeamPairInfo } from '@/types';
 import { useEffect, useState } from 'react';
+import TeamGroupBlock from './TeamGroupBlock';
 import { useAppSelector } from '@/redux/store';
+
 
 const TeamsBlock = () => {
   const teams = useAppSelector(item => item.teamsReducer.value);
@@ -32,24 +33,18 @@ const TeamsBlock = () => {
       className={'teams-block'}
     >
       {
+        teamPairs.length > 0 ?
         teamPairs.map(({ teamA, teamB }, teamIndex) =>
-          <div
-            className={'team-group'}
-            key={`teams-group-${teamIndex}`}
-          >
-            <Team
-              name={'Team A'}
-              teamInfo={teamA}
-              key={`team-a-group-${teamIndex}`}
-            />
-            <h3>VS</h3>
-            <Team
-              name={`Team B`}
-              teamInfo={teamB}
-              key={`team-b-group-${teamIndex}`}
-            />
-          </div>
-        )
+          <TeamGroupBlock
+            teamA={teamA}
+            teamB={teamB}
+            key={`team-block-${teamIndex}`}
+            special={teamIndex.toString()}
+          />
+        ) :
+        <TeamGroupBlock
+          special={'empty'}
+        />
       }
     </div>
   );
