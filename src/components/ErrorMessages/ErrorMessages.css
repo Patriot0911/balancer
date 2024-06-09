@@ -1,0 +1,65 @@
+@keyframes error-appearance {
+    0% {
+        transform: translateY(55px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+.error-notifications-container {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 350px;
+    max-height: 400px;
+    overflow-y: hidden;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.error-notifications-container::-webkit-scrollbar {
+    display: none;
+}
+.error-notifications-container .error-noty-container {
+    background-color: rgba(53, 34, 34, 0.638);
+    height: 85px;
+    color: aliceblue;
+    padding: 15px;
+    transition:
+        background-color ease-in-out 0.1s;
+    box-shadow: rgba(237, 128, 128, 0.285) 0px 1px 5px 1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    animation: error-appearance forwards 0.3s ease-in;
+    position: relative;
+}
+.error-notifications-container .error-noty-container:hover {
+    background-color: rgba(64, 33, 33, 0.927);
+}
+.error-noty-container .error-info-container {
+    flex-grow: 1;
+    height: 100%;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 35px;
+    padding-top: 15px;
+    user-select: none;
+}
+.error-noty-container .error-icon {
+    height: 50px;
+    width: 50px;
+}
+.error-noty-container .error-close-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}

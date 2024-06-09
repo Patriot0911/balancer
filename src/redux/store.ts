@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import allPlayersReducer from './features/all-players-slice';
 import teamsReducer from './features/teams-slice';
+import errorsReducer from './features/errors-slice';
+import allPlayersReducer from './features/all-players-slice';
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 export const store = configureStore({
     reducer: {
         allPlayersReducer,
-        teamsReducer
+        errorsReducer,
+        teamsReducer,
     }
 });
 

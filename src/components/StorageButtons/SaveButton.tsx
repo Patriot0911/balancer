@@ -4,7 +4,7 @@ import { useAppSelector } from "@/redux/store";
 import { ClassicButton } from "@/components/ui";
 
 const SaveButton = () => {
-  const players = useAppSelector(state => state.allPlayersReducer.value);
+  const players = useAppSelector(state => state.allPlayersReducer.players);
   const saveHandle = () => {
     localStorage.setItem('players', JSON.stringify(players));
   };

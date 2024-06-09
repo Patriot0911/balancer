@@ -8,7 +8,7 @@ import BalanceActions from '../BalanceActions';
 import { SettingsButton } from '@/components/Settings';
 
 const AllPlayers = () => {
-    const players = useAppSelector(state => state.allPlayersReducer.value);
+    const players = useAppSelector(state => state.allPlayersReducer.players);
     return (
         <section
             className={'all-pls'}

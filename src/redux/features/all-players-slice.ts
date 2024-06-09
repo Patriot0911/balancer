@@ -1,8 +1,8 @@
-import { IInitialState, IPlayer } from '@/types';
+import { IPlayersInitialState, IPlayer } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: IInitialState = {
-    value: []
+const initialState: IPlayersInitialState = {
+    players: [],
 };
 
 interface IRemovePlayer {
@@ -21,29 +21,29 @@ export const allPlayers = createSlice({
         clearAllPlayers: () => initialState,
         addPlayer: (state, action: PayloadAction<IPlayer>) => {
             return {
-                value: [
-                    ...state.value,
+                players: [
+                    ...state.players,
                     action.payload,
                 ],
             };
         },
         replacePlayer: (state, action: PayloadAction<IPlayerUpdate>) => {
-            const valueWithoutTarget = state.value.filter(
+            const valueWithoutTarget = state.players.filter(
                 (player) => player.name !== action.payload.name
             );
             return {
-                value: [
+                players: [
                     ...valueWithoutTarget,
                     action.payload.player,
                 ],
             };
         },
         removePlayer: (state, action: PayloadAction<IRemovePlayer>) => {
-            const players = state.value.filter(
+            const players = state.players.filter(
                 player => player.name !== action.payload.name
             );
             return {
-                value: [
+                players: [
                     ...players,
                 ],
             };
