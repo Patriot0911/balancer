@@ -62,7 +62,7 @@ export interface IPlayerRoleProps extends IProdRankData {
 };
 
 export interface ITeamProps {
-    teamInfo: ITeamInfo;
+    teamInfo?: ITeamInfo;
     name: string;
 };
 

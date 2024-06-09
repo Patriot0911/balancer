@@ -1,6 +1,6 @@
 import { IRoleContainerProps, ITeamPlayerProps } from "@/types";
+import { RoleImage } from "@/components/ui";
 import Player from "../Player";
-import RoleImage from "../ui/RoleImage";
 
 const TeamPlayer = ({ player, roleId }: ITeamPlayerProps) => {
   return (

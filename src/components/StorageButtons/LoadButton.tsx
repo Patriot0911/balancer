@@ -1,8 +1,8 @@
 "use client";
 
 import { addPlayer, clearAllPlayers } from "@/redux/features/all-players-slice";
+import { ClassicButton } from "@/components/ui";
 import { useDispatch } from "react-redux";
-import ClassicButton from "../ui/ClassicButton";
 import { IPlayer } from "@/types";
 
 const LoadButton = () => {

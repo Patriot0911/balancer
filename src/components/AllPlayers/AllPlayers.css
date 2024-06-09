@@ -34,6 +34,13 @@
     visibility: hidden;
     width: 0;
 }
+.all-pls .balance-error-container {
+    text-align: center;
+    width: 100%;
+    height: 25px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
 
 @media (width < 1500px) {
     .all-pls {
