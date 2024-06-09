@@ -1,5 +1,5 @@
+import { RoleImage } from "@/components/ui";
 import { IPlayerRoleProps } from "@/types";
-import RoleImage from "../ui/RoleImage";
 
 const PlayerRole = (props: IPlayerRoleProps) => {
   return (

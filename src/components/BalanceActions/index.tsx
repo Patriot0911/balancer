@@ -1,8 +1,8 @@
 "use client";
 
+import './BalanceActions.css';
 import { addTeam, clearAllTeams } from '@/redux/features/teams-slice';
-import ErrorAlert from "@/components/ui/ErrorInfo";
-import ClassicButton from '../ui/ClassicButton';
+import { ErrorInfo, ClassicButton } from "@/components/ui";
 import { IBalanceActionsProps } from '@/types';
 import balancer from '@/scripts/newBalancer';
 import { useDispatch } from 'react-redux';
@@ -12,13 +12,13 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
     const [error, setError] = useState<string | null>();
     const dispatch = useDispatch();
 
-    const balanceHandle = () => {
+    const balanceHandle = (isMixed: boolean) => {
         const teamsNumber = 2 /*Math.floor(players.length / 5)*/;
         if (teamsNumber < 2) {
             return setError("Not enough players to form teams");
         };
         try {
-            const teams = balancer(players, teamsNumber);
+            const teams = balancer(players, isMixed, teamsNumber);
             if(!teams)
                 return setError('Something went wrong with team formation');
             setError('');
@@ -38,16 +38,28 @@ const BalanceActions = ({ players }: IBalanceActionsProps) => {
             >
                 {
                     error &&
-                    <ErrorAlert
+                    <ErrorInfo
                         text={error}
                     />
                 }
             </div>
             <div>
-                <ClassicButton
-                    onClick={balanceHandle}
-                    text={'Balance by pair'}
-                />
+                <div
+                    className={'my-classic-button-container'}
+                >
+                    <ClassicButton
+                        text={'Balance'}
+                        onClick={
+                            () => balanceHandle(false)
+                        }
+                    />
+                    <ClassicButton
+                        text={'Mix Balance'}
+                        onClick={
+                            () => balanceHandle(true)
+                        }
+                    />
+                </div>
             </div>
         </>
     );

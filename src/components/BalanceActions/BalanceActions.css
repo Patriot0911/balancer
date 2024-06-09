@@ -1,0 +1,11 @@
+.my-classic-button-container {
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    gap: 5px;
+}
+.my-classic-button-container button {
+    width: 100%;
+    padding: 8px;
+}

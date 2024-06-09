@@ -1,15 +1,11 @@
 import { addPlayer } from "@/redux/features/all-players-slice";
-import { getRank } from "@/scripts/ranks";
-import { IPlayer } from "@/types";
+import { InputField, ErrorInfo, } from '@/components/ui';
 import { useState, useRef, FormEvent } from "react";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "@/redux/store";
-
 import PlayerFormButtons from "./PlayerFormButtons";
-
-import InputField from "../ui/InputField";
-import ErrorAlert from "../ui/ErrorInfo";
-
+import { useAppSelector } from "@/redux/store";
+import { getRank } from "@/scripts/ranks";
+import { useDispatch } from "react-redux";
+import { IPlayer } from "@/types";
 
 const InputPlayerForm = () => {
     const [error, setError] = useState<string | null>();
@@ -70,7 +66,7 @@ const InputPlayerForm = () => {
             />
             {
                 error ?
-                    <ErrorAlert
+                    <ErrorInfo
                         text={error}
                     /> :
                     <br />

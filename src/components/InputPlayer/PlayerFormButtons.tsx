@@ -1,4 +1,4 @@
-import ClassicButton from "../ui/ClassicButton";
+import { ClassicButton } from "@/components/ui";
 
 const PlayerFormButtons = () => {
   return (

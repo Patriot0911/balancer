@@ -100,6 +100,7 @@ const initTeamState = (rolesCount: ITeamRolesCount) => ({
 
 const balanceInit = (
     inputPlayers: IPlayer[],
+    isRandom = false,
     teamCount = 2,
     rolesCount = defaultRolesCount,
 ) => {
@@ -176,7 +177,7 @@ const balanceInit = (
             const sortedPairs = pairsList.sort(
                 (pairA, pairB) => pairA.gap - pairB.gap
             );
-            const selectedPair = sortedPairs[0];
+            const selectedPair = isRandom ? sortedPairs[Math.floor(Math.random()*sortedPairs.length)] : sortedPairs[0];
             players = players.filter(
                 i => i.name !== selectedPair.player1.name && i.name !== selectedPair.player2?.name
             );
