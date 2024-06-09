@@ -1,6 +1,5 @@
 import { IRoleContainerProps, ITeamPlayerProps } from "@/types";
-import { RoleImage } from "@/components/ui";
-import Player from "../Player";
+import { RoleImage, Player, } from "@/components/ui";
 
 const TeamPlayer = ({ player, roleId }: ITeamPlayerProps) => {
   return (
@@ -12,12 +11,12 @@ const TeamPlayer = ({ player, roleId }: ITeamPlayerProps) => {
       />
       {
         player ?
-          <Player
-            {...player}
-          /> :
-          <div
-            className={'player-container'}
-          />
+        <Player
+          {...player}
+        /> :
+        <div
+          className={'player-container'}
+        />
       }
     </div>
   );
