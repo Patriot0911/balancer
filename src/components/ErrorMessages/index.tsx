@@ -1,7 +1,8 @@
 'use client';
+import { AnimatePresence } from 'framer-motion';
+import { useAppSelector } from "@/redux/store";
 import ErrorBox from './ErrorBox';
 import './ErrorMessages.css';
-import { useAppSelector } from "@/redux/store";
 
 const ErrorMessages = () => {
     const errors = useAppSelector(
@@ -11,15 +12,17 @@ const ErrorMessages = () => {
         <div
             className={'error-notifications-container'}
         >
-            {
-                errors.map(
-                    (item, index) => <ErrorBox
-                        key={index}
-                        index={index}
-                        {...item}
-                    />
-                )
-            }
+            <AnimatePresence>
+                {
+                    errors.map(
+                        (item, index) => <ErrorBox
+                            key={index}
+                            index={index}
+                            {...item}
+                        />
+                    )
+                }
+            </AnimatePresence>
         </div>
     );
 };

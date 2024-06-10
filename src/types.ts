@@ -36,6 +36,7 @@ export type TInputFieldProps = {
 export interface IErrorInfo {
     title: string;
     description: string;
+    count: number;
 };
 
 export interface IErrorInitialState {

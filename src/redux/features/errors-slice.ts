@@ -5,8 +5,6 @@ interface IRemoveError {
     index: number;
 };
 
-const MAX_ERRORS_COUNT = 3;
-
 const initialState: IErrorInitialState = {
     errors: [],
 };
@@ -16,14 +14,28 @@ export const errors = createSlice({
     initialState,
     reducers: {
         addError: (state, action: PayloadAction<IErrorInfo>) => {
-            const errorsList = [...state.errors];
-            if(errorsList.length >= MAX_ERRORS_COUNT) {
-                errorsList.shift();
+            const indexOfError = state.errors.findIndex(
+                (item) => item.title === action.payload.title && item.description === action.payload.description
+            );
+            if(indexOfError === -1) {
+                return ({
+                    errors: [
+                        ...state.errors,
+                        {
+                            ...action.payload,
+                            count: 0,
+                        },
+                    ],
+                });
             };
-            errorsList.push(action.payload);
             return {
                 errors: [
-                    ...errorsList,
+                    ...state.errors.map(
+                        (item, index) => ({
+                            ...item,
+                            count: index === indexOfError ? item.count + 1 : item.count,
+                        })
+                    ),
                 ],
             };
         },

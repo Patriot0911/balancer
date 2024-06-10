@@ -1,24 +1,11 @@
-@keyframes error-appearance {
-    0% {
-        transform: translateY(55px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0px);
-        opacity: 1;
-    }
-}
-
 .error-notifications-container {
     position: fixed;
     right: 10px;
     bottom: 10px;
     width: 350px;
-    max-height: 400px;
-    overflow-y: hidden;
     padding: 10px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 15px;
 }
 .error-notifications-container::-webkit-scrollbar {
@@ -29,14 +16,11 @@
     height: 85px;
     color: aliceblue;
     padding: 15px;
-    transition:
-        background-color ease-in-out 0.1s;
     box-shadow: rgba(237, 128, 128, 0.285) 0px 1px 5px 1px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    animation: error-appearance forwards 0.3s ease-in;
     position: relative;
 }
 .error-notifications-container .error-noty-container:hover {
