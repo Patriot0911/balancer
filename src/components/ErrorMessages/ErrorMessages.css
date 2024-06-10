@@ -4,15 +4,13 @@
     bottom: 10px;
     width: 350px;
     padding: 10px;
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 15px;
 }
 .error-notifications-container::-webkit-scrollbar {
     display: none;
 }
 .error-notifications-container .error-noty-container {
     background-color: rgba(53, 34, 34, 0.638);
+    margin-top: 15px;
     height: 85px;
     color: aliceblue;
     padding: 15px;

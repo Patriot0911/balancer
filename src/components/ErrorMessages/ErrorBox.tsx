@@ -11,6 +11,24 @@ interface IErrorBoxProps {
     description: string;
 };
 
+const motionProps = {
+    initial: {
+        x: 300,
+        opacity: 0,
+        scale: 1.1,
+    },
+    animate: {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+    },
+    exit: {
+        x: -300,
+        opacity: 0,
+        scale: 0.8,
+    },
+};
+
 const ErrorBox = ({ index, title, description, count, }: IErrorBoxProps) => {
     const dispatch = useDispatch();
     const removeHandle = () => dispatch(
@@ -20,25 +38,12 @@ const ErrorBox = ({ index, title, description, count, }: IErrorBoxProps) => {
     );
     return (
         <motion.div
+            layout
             className={'error-noty-container'}
             transition={{
-                type: 'spring',
+                type: 'tween',
             }}
-            initial={{
-                x: 300,
-                opacity: 0,
-                scale: 1.1,
-            }}
-            animate={{
-                x: 0,
-                opacity: 1,
-                scale: 1,
-            }}
-            exit={{
-                x: -300,
-                opacity: 0,
-                scale: 0.8,
-            }}
+            {...motionProps}
         >
             <BiError
                 className={'error-icon'}
@@ -50,7 +55,7 @@ const ErrorBox = ({ index, title, description, count, }: IErrorBoxProps) => {
             <div
                 className={'error-info-container'}
             >
-                <h4>{title ?? 'Error'} [X {count}]</h4>
+                <h4>{title ?? 'Error'} <i>[X  {count}]</i></h4>
                 <p>
                     {description}
                 </p>

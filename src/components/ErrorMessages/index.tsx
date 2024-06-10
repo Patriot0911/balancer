@@ -1,8 +1,8 @@
 'use client';
+import './ErrorMessages.css';
 import { AnimatePresence } from 'framer-motion';
 import { useAppSelector } from "@/redux/store";
 import ErrorBox from './ErrorBox';
-import './ErrorMessages.css';
 
 const ErrorMessages = () => {
     const errors = useAppSelector(
@@ -12,7 +12,9 @@ const ErrorMessages = () => {
         <div
             className={'error-notifications-container'}
         >
-            <AnimatePresence>
+            <AnimatePresence
+                mode={'popLayout'}
+            >
                 {
                     errors.map(
                         (item, index) => <ErrorBox

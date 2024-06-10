@@ -18,7 +18,7 @@ export const errors = createSlice({
                 (item) => item.title === action.payload.title && item.description === action.payload.description
             );
             if(indexOfError === -1) {
-                return ({
+                return {
                     errors: [
                         ...state.errors,
                         {
@@ -26,7 +26,7 @@ export const errors = createSlice({
                             count: 0,
                         },
                     ],
-                });
+                };
             };
             return {
                 errors: [
