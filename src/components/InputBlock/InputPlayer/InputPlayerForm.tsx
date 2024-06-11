@@ -1,6 +1,6 @@
 import { addPlayer } from "@/redux/features/all-players-slice";
 
-import { InputField, ErrorInfo, } from '@/components/ui';
+import { InputField, } from '@/components/ui';
 import PlayerFormButtons from "./PlayerFormButtons";
 import { useAppSelector } from "@/redux/store";
 import { useRef, FormEvent } from "react";

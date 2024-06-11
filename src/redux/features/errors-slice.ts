@@ -13,7 +13,7 @@ export const errors = createSlice({
     name: 'errors',
     initialState,
     reducers: {
-        addError: (state, action: PayloadAction<IErrorInfo>) => {
+        addError: (state, action: PayloadAction<Omit<IErrorInfo, 'count'>>) => {
             const indexOfError = state.errors.findIndex(
                 (item) => item.title === action.payload.title && item.description === action.payload.description
             );
