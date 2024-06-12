@@ -7,8 +7,23 @@
     cursor: pointer;
     transition: transform ease-in-out 0.8s;
     top: 15px;
+    z-index: 3;
 }
 .settings-open-button:hover {
     color: rgb(253, 253, 253);
     transform: rotate(165deg);
+}
+.settings-modal-container {
+    user-select: none;
+    position: absolute;
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    z-index: 2;
+    background: linear-gradient(
+        to right bottom,
+        rgba(16, 15, 15, 0.888),
+        rgba(52, 47, 47, 0.888)
+    );
+    display: flex;
 }

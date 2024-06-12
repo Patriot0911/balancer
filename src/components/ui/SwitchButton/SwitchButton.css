@@ -1,0 +1,21 @@
+.switch-button {
+    display: flex;
+    border: 1px solid white;
+    width: 45px;
+    padding: 3px;
+    border-radius: 50px;
+    cursor: pointer;
+    justify-content: flex-start;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color ease-in-out 0.1s;
+}
+.switch-button .circle {
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    background-color: white;
+}
+.switch-button[data-isOn="true"] {
+    background-color: rgba(126, 131, 136, 0.628);
+    justify-content: flex-end;
+}

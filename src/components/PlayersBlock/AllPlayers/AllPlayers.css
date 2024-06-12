@@ -12,6 +12,7 @@
     border: 2px solid black;
     align-items: center;
     position: relative;
+    overflow: hidden;
 }
 .all-pls .players-list {
     background-color: rgba(48, 45, 45, 0.459);
