@@ -48,8 +48,7 @@ const isValidInit = (players: IPlayer[], rolesCount: ITeamRolesCount, teamCount:
     };
     return true;
 };
-
-const isValidPlayersSet = (players: IPlayer[], roleQuota: IRoleQuotaInfo, ignoredRoles: Role[]) => {
+const isValidPlayersSet = (strategy: boolean) => (players: IPlayer[], roleQuota: IRoleQuotaInfo, ignoredRoles: Role[]) => {
     for(const role of Object.keys(Role)) {
         const loweredRole = role.toLowerCase() as Role;
         const isIgnorredRole = ignoredRoles.includes(loweredRole);
@@ -64,15 +63,19 @@ const isValidPlayersSet = (players: IPlayer[], roleQuota: IRoleQuotaInfo, ignore
         const rolesKeys = Object.keys(Role).filter(
             k => k !== 'Tank'
         ) as Role[];
-        const playersWithRole1Count = getPlayersWith(players, rolesKeys[0].toLowerCase() as Role);
+        const playersWithRole1Count = getPlayersWith(players, rolesKeys[0].toLowerCase() as Role).length;
         const playersWithRole2Count = getPlayersWith(players, rolesKeys[1].toLowerCase() as Role).length;
         const doubleRoleCount = players.filter(
             (pl) => pl.roles[rolesKeys[0].toLowerCase() as Role] && pl.roles[rolesKeys[1].toLowerCase() as Role]
-        );
-        const role1Lack = playersWithRole1Count.length - doubleRoleCount.length < roleQuota[rolesKeys[0].toLowerCase() as Role];
-        const role2Lack = playersWithRole2Count - doubleRoleCount.length < roleQuota[rolesKeys[1].toLowerCase() as Role];
-        if(role1Lack && role2Lack)
+        ).length;
+        const role1Lack = playersWithRole1Count - doubleRoleCount < roleQuota[rolesKeys[0].toLowerCase() as Role];
+        const role2Lack = playersWithRole2Count - doubleRoleCount < roleQuota[rolesKeys[1].toLowerCase() as Role];
+        if(
+            (!role1Lack && !role2Lack && strategy) ||
+            (role1Lack && role2Lack && !strategy)
+        ) {
             return false;
+        };
     };
 
     return true;
@@ -98,15 +101,15 @@ const initTeamState = (rolesCount: ITeamRolesCount) => ({
     score: 0,
 });
 
-const balanceInit = (
+const balanceProc = (
     inputPlayers: IPlayer[],
+    strategy: boolean,
     isRandom = false,
     teamCount = 2,
     rolesCount = defaultRolesCount,
 ) => {
-    if(!isValidInit(inputPlayers, rolesCount, teamCount))
-        return;
     let players = [...inputPlayers];
+    const curIsValidPlayersSet = isValidPlayersSet(strategy);
     const rolesKeys = (Object.keys(rolesCount) as Role[]);
     const ignoredRoles: Role[] = rolesKeys.filter(
         key => (!rolesCount[key as Role] || rolesCount[key as Role] <= 0)
@@ -146,7 +149,7 @@ const balanceInit = (
                 const withoutPl1 = players.filter(
                     i => i.name !== player1.name
                 );
-                const isValidSet = isValidPlayersSet(withoutPl1, validationRoleQuota, ignoredRoles);
+                const isValidSet = curIsValidPlayersSet(withoutPl1, validationRoleQuota, ignoredRoles);
                 if(!isValidSet)
                     continue;
                 const pair = initPair(player1);
@@ -156,7 +159,7 @@ const balanceInit = (
                     const withoutBoth = withoutPl1.filter(
                         i => i.name !== player2.name
                     );
-                    const isValidSetBoth = isValidPlayersSet(withoutBoth, validationRoleQuota, ignoredRoles);
+                    const isValidSetBoth = curIsValidPlayersSet(withoutBoth, validationRoleQuota, ignoredRoles);
                     if(!isValidSetBoth)
                         continue;
                     const newGap = getGap(player1, player2, role);
@@ -203,6 +206,33 @@ const balanceInit = (
         ignoredRoles.push(role);
     };
     return resTeamsList;
+};
+
+const balanceInit = (
+    inputPlayers: IPlayer[],
+    isRandom = false,
+    teamCount = 2,
+    rolesCount = defaultRolesCount,
+) => {
+    if(!isValidInit(inputPlayers, rolesCount, teamCount))
+        return;
+    const testTeams: ITeamInfo[][] = [];
+    for(let i = 0; i < 2; i++) {
+        try {
+            const res = balanceProc(
+                inputPlayers,
+                i === 1,
+                isRandom,
+                teamCount,
+                rolesCount
+            );
+            testTeams.push(res);
+        } catch (e: any) {
+            if(i == 1 && testTeams.length < 1)
+                throw new Error(e.message);
+        };
+    };
+    return testTeams[Math.floor(Math.random()*testTeams.length)];
 };
 
 export default balanceInit;

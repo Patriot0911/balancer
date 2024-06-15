@@ -47,7 +47,7 @@ export const balanceOptions = createSlice({
                 ...state,
                 roles: {
                     ...state.roles,
-                    ...action,
+                    ...action.payload,
                 },
             };
         },

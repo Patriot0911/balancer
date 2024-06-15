@@ -10,11 +10,8 @@ const SwitchButton = ({ state, callback }: ISwitchButtonProps) => {
     return (
         <div
             className={`switch-button`}
-            data-isOn={state}
-            onClick={() => {
-                console.log(state ? 'start' : 'end');
-                callback()
-            }}
+            data-ison={state}
+            onClick={callback}
         >
             <motion.div
                 layout
