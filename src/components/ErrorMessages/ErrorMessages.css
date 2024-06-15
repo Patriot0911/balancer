@@ -1,0 +1,47 @@
+.error-notifications-container {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 350px;
+    padding: 10px;
+}
+.error-notifications-container::-webkit-scrollbar {
+    display: none;
+}
+.error-notifications-container .error-noty-container {
+    background-color: rgba(53, 34, 34, 0.638);
+    margin-top: 15px;
+    height: 85px;
+    color: aliceblue;
+    padding: 15px;
+    box-shadow: rgba(237, 128, 128, 0.285) 0px 1px 5px 1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.error-notifications-container .error-noty-container:hover {
+    background-color: rgba(64, 33, 33, 0.927);
+}
+.error-noty-container .error-info-container {
+    flex-grow: 1;
+    height: 100%;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 35px;
+    padding-top: 15px;
+    user-select: none;
+}
+.error-noty-container .error-icon {
+    height: 50px;
+    width: 50px;
+}
+.error-noty-container .error-close-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}

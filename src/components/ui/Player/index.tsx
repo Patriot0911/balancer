@@ -12,7 +12,7 @@ const Player = ({ name, roles, }: IPlayer) => {
     const [isInEdit, setIsInEdit] = useState(false);
     const dispatch = useDispatch();
 
-    const players = useAppSelector(state => state.allPlayersReducer.value);
+    const players = useAppSelector(state => state.allPlayersReducer.players);
 
     const nickRef = useRef<HTMLInputElement>(null);
     const tankRef = useRef<HTMLInputElement>(null);

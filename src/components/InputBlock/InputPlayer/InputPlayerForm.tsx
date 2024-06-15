@@ -1,17 +1,17 @@
 import { addPlayer } from "@/redux/features/all-players-slice";
 
-import { InputField, ErrorInfo, } from '@/components/ui';
-import { useState, useRef, FormEvent } from "react";
+import { InputField, } from '@/components/ui';
 import PlayerFormButtons from "./PlayerFormButtons";
 import { useAppSelector } from "@/redux/store";
+import { useRef, FormEvent } from "react";
 import { getRank } from "@/scripts/ranks";
 import { useDispatch } from "react-redux";
 import { IPlayer } from "@/types";
+import { addError } from "@/redux/features/errors-slice";
 
 const InputPlayerForm = () => {
-    const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
-    const players = useAppSelector(state => state.allPlayersReducer.value);
+    const players = useAppSelector(state => state.allPlayersReducer.players);
 
     const nickRef = useRef<HTMLInputElement>(null);
     const tankRef = useRef<HTMLInputElement>(null);
@@ -25,6 +25,11 @@ const InputPlayerForm = () => {
     const isValidRankInput = (rankData?: string) =>
         (!rankData || isNaN(parseInt(rankData as string))) ||parseInt(rankData) >= 0;
 
+    const addErrorHandle = (description: string) => dispatch(addError({
+        title: 'Creation Error',
+        description,
+    }));
+
     const getRanks = () => {
         try {
             if(
@@ -32,7 +37,7 @@ const InputPlayerForm = () => {
                 !isValidRankInput(damageRef.current?.value) ||
                 !isValidRankInput(supportRef.current?.value)
             ) {
-                setError('Invalid rank provided');
+                addErrorHandle('Invalid rank provided');
                 return {
                     state: false,
                 };
@@ -47,7 +52,7 @@ const InputPlayerForm = () => {
                 supportRank,
             };
         } catch (e: any) {
-            setError(e.message);
+            addErrorHandle(e.message);
         };
         return {
             state: false,
@@ -67,20 +72,17 @@ const InputPlayerForm = () => {
         } = ranks;
 
         if (!nickName || nickName.trim().length === 0) {
-            return setError('Nickname cannot be empty');
+            return addErrorHandle('Nickname cannot be empty');
         };
 
         const trimmedNickName = nickName.trim();
         if (!isValidNickName(trimmedNickName)) {
-            return setError('Such nickname is already used');
+            return addErrorHandle('Such nickname is already used');
         };
 
         if (!tankRank && !damageRank && !supportRank) {
-            return setError('Roles list cannot be empty');
+            return addErrorHandle('Roles list cannot be empty');
         };
-
-        if (error)
-            setError(null);
 
         const player: IPlayer = {
             name: trimmedNickName,
@@ -110,13 +112,6 @@ const InputPlayerForm = () => {
                 name={'nickName'}
                 ref={nickRef}
             />
-            <div
-                className={'error-container'}
-            >
-                {
-                    error && <ErrorInfo text={error} />
-                }
-            </div>
             <section className={'roles-input-container'}>
                 <InputField label={'Tank'} name={'tankRank'} ref={tankRef} />
                 <InputField label={'Damage'} name={'damageRank'} ref={damageRef} />

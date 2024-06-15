@@ -1,4 +1,4 @@
-import PlayerRolesContainer from "@/components/Player/PlayerRolesContainer";
+import PlayerRolesContainer from "@/components/ui/Player/PlayerRolesContainer";
 import { IPlayer } from "@/types";
 
 const PlayerDataDetails = ({ name, roles, }: IPlayer) => {

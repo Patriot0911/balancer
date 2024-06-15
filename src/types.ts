@@ -23,10 +23,6 @@ export interface IPlayer {
     roles: IPlayerRoles;
 };
 
-export interface IErrorInfoProps {
-    text: string;
-}
-
 export type TClassicButton = {
     text: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
@@ -37,8 +33,18 @@ export type TInputFieldProps = {
     ref?: Ref<HTMLInputElement>;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export interface IInitialState {
-    value: IPlayer[];
+export interface IErrorInfo {
+    title: string;
+    description: string;
+    count: number;
+};
+
+export interface IErrorInitialState {
+    errors: IErrorInfo[];
+};
+
+export interface IPlayersInitialState {
+    players: IPlayer[];
 };
 
 export interface IRank {

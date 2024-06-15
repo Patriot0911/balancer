@@ -1,5 +1,5 @@
-import { IPlayersListProps } from "@/types";
-import Player from "../Player";
+import { IPlayersListProps } from '@/types';
+import { Player } from '@/components/ui';
 
 const PlayersList = ({ players }: IPlayersListProps) => {
   return (
